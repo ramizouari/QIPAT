@@ -35,6 +35,7 @@ namespace GUI {
     public slots:
        void showHistogram();
        void showHistogramCurve();
+       void showSpectrum();
        void openImage();
        void saveImage();
        void saveImageAs();

@@ -12,12 +12,15 @@ namespace image
 {
     class Padding
     {
+    protected:
+        Image* imagePtr;
     public:
-        const Image &image;
         explicit Padding(Image &image);
         virtual ~Padding() = default;
         Real operator()(int x, int y) const;
         virtual Real operator()(int c,int x, int y) const = 0;
+        [[nodiscard]] Image& image() const;
+        void setImage(Image &image);
     };
 
     class ConstantPadding : public Padding

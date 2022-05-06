@@ -5,14 +5,19 @@
 #ifndef IMAGEPROCESSING_SPECTRUMVIEW_H
 #define IMAGEPROCESSING_SPECTRUMVIEW_H
 
-namespace GUI {
-    namespace spectrum {
+#include <QLabel>
+#include "image/Image.h"
+#include "gui/imageview.h"
 
-        class SpectrumView {
+namespace GUI::spectrum {
 
+        class SpectrumView :public ImageView{
+        Q_OBJECT
+        public:
+            explicit SpectrumView(const image::Image &img,QWidget *parent = nullptr);
+            ~SpectrumView() override = default;
         };
 
-    } // GUI
-} // spectrum
+    } // spectrum
 
 #endif //IMAGEPROCESSING_SPECTRUMVIEW_H

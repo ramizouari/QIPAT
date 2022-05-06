@@ -5,6 +5,7 @@
 #ifndef IMAGEPROCESSING_CONVOLUTIONALFILTER_H
 #define IMAGEPROCESSING_CONVOLUTIONALFILTER_H
 
+#include <memory>
 #include "image/Image.h"
 #include "Filter.h"
 #include "image/utils.h"
@@ -21,6 +22,8 @@ namespace image::filter {
 
     class ConvolutionalFilter : public AbstractConvolutionalFilter {
         Matrix kernel;
+    protected:
+        ConvolutionalFilter()= default;
     public:
         explicit ConvolutionalFilter(const tensor<2> &kernel);
 
@@ -29,7 +32,7 @@ namespace image::filter {
 
         [[nodiscard]] Image apply(const Image &src) const override;
 
-        [[nodiscard]] Image apply(const Padding &src) const override;
+        [[nodiscard]] Image apply(Padding &src) const override;
 
         [[nodiscard]] const Matrix &getKernel() const override;
 
@@ -50,8 +53,15 @@ namespace image::filter {
 
     class SeparableConvolutionalFilter : public AbstractConvolutionalFilter
     {
+        mutable std::unique_ptr<Matrix> kernel=nullptr;
+    protected:
         Vector K1,K2;
+        SeparableConvolutionalFilter() = default;
     public:
+        enum class Direction {
+            HORIZONTAL,
+            VERTICAL
+        };
         explicit SeparableConvolutionalFilter(const std::vector<Real> &K1,const std::vector<Real> &K2);
 
         explicit SeparableConvolutionalFilter(const Vector &K1,const Vector& K2);
@@ -59,12 +69,23 @@ namespace image::filter {
 
         [[nodiscard]] Image apply(const Image &src) const override;
 
-        [[nodiscard]] Image apply(const Padding &src) const override;
+        [[nodiscard]] Image apply(Padding &src) const override;
 
         [[nodiscard]] const Matrix &getKernel() const override;
 
         [[nodiscard]] Real getComponent(int x, int y) const override;
 
+        [[nodiscard]] Image apply(const Image&src,Direction &direction) const;
+
+        [[nodiscard]] Image apply(const Padding&src,Direction &direction) const;
+
+        [[nodiscard]] Image applyHorizontal(const Image&src) const;
+
+        [[nodiscard]] Image applyHorizontal(const Padding&src) const;
+
+        [[nodiscard]] Image applyVertical(const Image&src) const;
+
+        [[nodiscard]] Image applyVertical(const Padding&src) const;
 
     };
 

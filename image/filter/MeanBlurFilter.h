@@ -25,7 +25,7 @@ namespace image::filter {
     public:
         using AbstractMeanBlurFilter::AbstractMeanBlurFilter;
         [[nodiscard]] Image apply(const Image &src) const override;
-        [[nodiscard]] Image apply(const Padding &src) const override;
+        [[nodiscard]] Image apply(Padding &src) const override;
     };
 
 
@@ -33,7 +33,7 @@ namespace image::filter {
     public:
         using AbstractMeanBlurFilter::AbstractMeanBlurFilter;
         [[nodiscard]] Image apply(const Image &src) const override;
-        [[nodiscard]] Image apply(const Padding &src) const override;
+        [[nodiscard]] Image apply(Padding &src) const override;
     };
 
     } // filter

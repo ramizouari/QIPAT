@@ -5,7 +5,7 @@
 #include "GlobalFilter.h"
 
 namespace image::filter::global {
-    Image GlobalFilter::apply(const Padding &src) const {
-        return apply(src.image);
+    Image GlobalFilter::apply(Padding &src) const {
+        return apply(src.image());
     }
 } // Filter

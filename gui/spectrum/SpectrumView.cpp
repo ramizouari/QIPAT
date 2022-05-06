@@ -3,8 +3,12 @@
 //
 
 #include "SpectrumView.h"
+#include "image/utils.h"
 
 namespace GUI {
     namespace spectrum {
+        SpectrumView::SpectrumView(const image::Image &img, QWidget *parent): ImageView(parent) {
+            setImage(new image::Image(image::convolution::imageSpectrum(img)));
+        }
     } // GUI
 } // spectrum

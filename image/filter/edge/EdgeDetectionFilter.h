@@ -21,7 +21,7 @@ class EdgeDetectionFilter :public Filter
         EdgeDetectionFilter(differential::DifferentialFilter *differentialFilter, gray::GrayFilter *grayFilter, int threshold);
         ~EdgeDetectionFilter() override = default ;
         [[nodiscard]] Image apply(const Image &image) const final;
-        [[nodiscard]] Image apply(const Padding &padding) const final;
+        [[nodiscard]] Image apply(Padding &padding) const final;
     };
 
 } // edge
