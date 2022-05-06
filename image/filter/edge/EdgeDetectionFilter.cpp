@@ -20,7 +20,7 @@ namespace image::filter::edge
   {
   }
 
-    Image EdgeDetectionFilter::apply(const Padding &padding) const
+    Image EdgeDetectionFilter::apply(Padding &padding) const
     {
         auto I = grayFilter->apply(differentialFilter->apply(padding));
         for (int c = 0; c < I.nb_channel; c++) for (int i = 0; i < I.width; i++) for (int j = 0; j < I.height; j++)

@@ -5,14 +5,20 @@
 #ifndef IMAGEPROCESSING_GAUSSIANBLURFILTER_H
 #define IMAGEPROCESSING_GAUSSIANBLURFILTER_H
 
-namespace image {
-    namespace filter {
+#include "ConvolutionalFilter.h"
 
-        class GaussianBlurFilter {
+namespace image::filter {
 
+        class GaussianBlurFilter:public SeparableConvolutionalFilter {
+            Real stdX, stdY;
+            int stdCount;
+        public:
+            GaussianBlurFilter(Real stdX,Real stdY,int stdCount=3);
+            explicit GaussianBlurFilter(Real std,int stdCount=3);
+            ~GaussianBlurFilter() override =default;
+            static std::pair<Vector,Vector> getKernels(Real stdX,Real stdY,int stdCount=3);
         };
 
-    } // image
-} // filter
+    } // filter
 
 #endif //IMAGEPROCESSING_GAUSSIANBLURFILTER_H

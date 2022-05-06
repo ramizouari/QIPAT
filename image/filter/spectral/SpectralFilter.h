@@ -14,7 +14,7 @@ namespace image::filter::spectral {
     public:
         [[nodiscard]] virtual Real frequencyComponent(int i, int j) const = 0;
         [[nodiscard]] image::Image apply(const image::Image &image) const override;
-        [[nodiscard]] image::Image apply(const Padding &src) const override;
+        [[nodiscard]] image::Image apply(Padding &src) const override;
     };
 
 

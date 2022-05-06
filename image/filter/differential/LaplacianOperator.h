@@ -16,7 +16,7 @@ namespace image::filter::differential {
             public:
                 [[nodiscard]] const Matrix& getKernel() const override;
                 [[nodiscard]] Image apply(const Image &src) const override;
-                [[nodiscard]] Image apply(const Padding &src) const override;
+                [[nodiscard]] Image apply(Padding &src) const override;
                 [[nodiscard]] Real getComponent(int i, int j) const override;
             };
 
@@ -26,7 +26,7 @@ namespace image::filter::differential {
         public:
             [[nodiscard]] const Matrix& getKernel() const override;
             [[nodiscard]] Image apply(const Image &src) const override;
-            [[nodiscard]] Image apply(const Padding &src) const override;
+            [[nodiscard]] Image apply(Padding &src) const override;
             [[nodiscard]] Real getComponent(int i, int j) const override;
         };
 

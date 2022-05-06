@@ -21,7 +21,9 @@ namespace image::filter {
         dst=std::move(apply(src));
     }
 
-
+    Image Filter::apply(Padding &src) const {
+        return apply(src.image());
+    }
 
 
 } // image

@@ -31,7 +31,7 @@ namespace GUI {
         void zoomIn();
         void zoomOut();
 
-    private:
+    protected:
         //Ui::ImageView *ui;
         std::unique_ptr<image::Image> imageData;
         QImage qImage;

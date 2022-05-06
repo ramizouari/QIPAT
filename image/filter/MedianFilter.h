@@ -15,7 +15,7 @@ namespace image::filter {
     public:
         explicit MedianFilter(int size);
         Image apply(const Image &src) const override;
-        Image apply(const Padding &src) const override;
+        Image apply(Padding &src) const override;
     };
 
     class SmallMedianFilter : public Filter {
@@ -23,7 +23,7 @@ namespace image::filter {
     public:
         explicit SmallMedianFilter(int size);
         Image apply(const Image &src) const override;
-        Image apply(const Padding &src) const override;
+        Image apply(Padding &src) const override;
     };
 
 } // filter

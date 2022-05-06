@@ -50,7 +50,14 @@ namespace image
         Matrix fast_convolution(const Matrix& src, const Matrix& kernel);
         Image fast_convolution(const Image& src, const Matrix& kernel);
         Image fast_convolution(const Image& src, const Image& kernel);
+
+        Image imageSpectrum(const Image& src,int max_value=255);
+        Image fftTransform(const Image& src);
     }
+
+    [[maybe_unused]] Matrix as_matrix(const Image& src,int channel=0);
+    [[maybe_unused]] Matrix as_matrix(Image &&src,int channel=0);
+    Image crop(const Image& src,int x,int y,int w,int h);
 }
 
 

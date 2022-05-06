@@ -15,7 +15,7 @@ namespace image::filter::differential {
     public:
         ~RobertsOperator() override = default;
         [[nodiscard]] Image apply(const image::Image &src) const override;
-        [[nodiscard]] Image apply(const image::Padding &src) const override;
+        [[nodiscard]] Image apply(Padding &src) const override;
     };
 
 } // differential

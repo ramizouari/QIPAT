@@ -10,8 +10,8 @@ namespace image::filter {
         return src;
     }
 
-    Image IdentityFilter::apply(const Padding &src) const {
-        return src.image;
+    Image IdentityFilter::apply(Padding &src) const {
+        return src.image();
     }
 
     const Matrix &IdentityFilter::getKernel() const {

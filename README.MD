@@ -44,7 +44,15 @@ Here is a little demo of some results of the application:
 <img src="img/DEMO2.png">
 
 ### b. Edge Detection
+In this example we will use the Sobel operator to detect the edges of the image.
 <div style="text-align: center;color :darkred">Original Bill Image</div>
 <img src="img/DEMO3.png">
 <div style="text-align: center;color :darkred">Edge Detection</div>
 <img src="img/DEMO4.png">
+
+### c. Spectral filtering
+In this example we will view the spectrum of our image, and will apply a spectral filter to it that will remove unwanted high frequencies.
+<div style="text-align: center;color :darkred">Original Baboon Image</div>
+<img src="img/DEMO5.png">
+<div style="text-align: center;color :darkred">Baboon Image after filtering. The old spectrum is the one at right</div>
+<img src="img/DEMO6.png">

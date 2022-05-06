@@ -26,7 +26,7 @@ namespace image::filter::spectral {
         return Z;
     }
 
-    image::Image AbstractSpectralFilter::apply(const Padding &src) const {
-        return apply(src.image);
+    image::Image AbstractSpectralFilter::apply(Padding &src) const {
+        return apply(src.image());
     }
 } // spectral

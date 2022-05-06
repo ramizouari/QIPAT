@@ -5,14 +5,12 @@
 #ifndef IMAGEPROCESSING_THRESHOLDSEGMENTATION_H
 #define IMAGEPROCESSING_THRESHOLDSEGMENTATION_H
 
-namespace image {
-    namespace segmentation {
+namespace image::segmentation {
 
-        class ThresholdSegmentation {
+    class ThresholdSegmentation {
 
-        };
+    };
 
-    } // image
 } // segmentation
 
 #endif //IMAGEPROCESSING_THRESHOLDSEGMENTATION_H

@@ -12,7 +12,7 @@ namespace image::filter::differential {
             class DifferentialFilter :virtual public Filter {
             public:
                 [[nodiscard]] Image gradientNorm(const Image &src) const;
-                [[nodiscard]] Image gradientNorm(const Padding &src) const;
+                [[nodiscard]] Image gradientNorm(Padding &&src) const;
             };
 
         } // differential

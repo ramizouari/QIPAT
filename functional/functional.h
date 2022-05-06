@@ -39,22 +39,23 @@ namespace functional {
     template<typename T>
     using base_type = typename base_type_t<T>::base_type;
 
-    template<typename M, typename O, typename G = typename M::base_field>
-    void apply_pointwise(const O &f, M &u) requires Endomorphism<O, G> {
-        if constexpr (std::is_same_v<G, M>)
+    template<typename M, typename O>
+    void apply_pointwise(const O &f, M &u)
+    {
+        if constexpr (!Iterable<M>)
             u = f(u);
         else
             for (auto &w: u)
-                apply_pointwise<std::remove_reference_t<decltype(w)>, O, G>(f, w);
+                apply_pointwise<std::remove_reference_t<decltype(w)>, O>(f, w);
     }
 
-    template<typename M, typename O, typename G = typename M::base_field>
-    void apply_pointwise(const O &f, M &u, M a, M b) requires MonoidOperation<O, G> {
-        if constexpr (std::is_same_v<G, M>)
+    template<typename M, typename O>
+    void apply_pointwise(const O &f, M &u, M a, M b) {
+        if constexpr (!Iterable<M>)
             u = f(a, b);
         else
             for (auto [p, s, t]: zip<M, M, M>(std::forward<M>(u), std::forward<M>(a), std::forward<M>(b)))
-                apply_pointwise<std::remove_reference_t<decltype(p)>, O, G>(f, p, s, t);
+                apply_pointwise<std::remove_reference_t<decltype(p)>, O>(f, p, s, t);
     }
 
     template<typename M, typename O, typename G = typename M::base_field>

@@ -11,7 +11,7 @@ namespace image::filter::global {
 
     class GlobalFilter :public Filter {
     public:
-        [[nodiscard]] Image apply(const Padding &src) const override;
+        [[nodiscard]] Image apply(Padding &src) const override;
         [[nodiscard]] Image apply(const Image &src) const override = 0;
     };
 

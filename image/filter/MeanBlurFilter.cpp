@@ -7,12 +7,12 @@
 namespace image::filter
 {
 
-    Image SmallMeanBlurFilter::apply(const Padding &src) const {
-        Image dst(src.image.width,src.image.height,src.image.nb_channel,src.image.max);
+    Image SmallMeanBlurFilter::apply(Padding &src) const {
+        Image dst(src.image().width,src.image().height,src.image().nb_channel,src.image().max);
         int s1=size/2,s2=size/2;
-        for(int c=0;c<src.image.nb_channel;c++) for(int i=0;i<src.image.width;i++) for(int j=0;j<src.image.height;j++) for(int p=0;p<size;p++) for(int q=0;q<size;q++)
+        for(int c=0;c<src.image().nb_channel;c++) for(int i=0;i<src.image().width;i++) for(int j=0;j<src.image().height;j++) for(int p=0;p<size;p++) for(int q=0;q<size;q++)
                             dst.data[c][i][j]+=src(c,i+p-s1,j+q-s2);
-        for(int c=0;c<src.image.nb_channel;c++) for(int i=0;i<src.image.width;i++) for(int j=0;j<src.image.height;j++)
+        for(int c=0;c<src.image().nb_channel;c++) for(int i=0;i<src.image().width;i++) for(int j=0;j<src.image().height;j++)
                     dst.data[c][i][j]/=size*size;
         return dst;
     }
@@ -70,20 +70,20 @@ namespace image::filter
         return src;
     }
 
-    Image MeanBlurFilter::apply(const Padding &src) const
+    Image MeanBlurFilter::apply(Padding &src) const
     {
-        Image dst(src.image.width,src.image.height,src.image.nb_channel);
+        Image dst(src.image().width,src.image().height,src.image().nb_channel);
         int s1=size/2,s2=size/2;
-        for(int c=0;c<src.image.nb_channel;c++)
+        for(int c=0;c<src.image().nb_channel;c++)
         {
-            tensor<2> prefixSum = make_tensor(src.image.width+size+1,src.image.height+size+1);
-            for(int i=1;i<=src.image.width+size;i++) {
-                for (int j = 1; j <= src.image.height+size; j++)
+            tensor<2> prefixSum = make_tensor(src.image().width+size+1,src.image().height+size+1);
+            for(int i=1;i<=src.image().width+size;i++) {
+                for (int j = 1; j <= src.image().height+size; j++)
                     prefixSum[i][j] = prefixSum[i][j - 1] + src(c,i-s1-1,j-s2-1);
             }
-            for(int i=1;i<=src.image.width+size;i++) for(int j=0;j<=src.image.height+size;j++)
+            for(int i=1;i<=src.image().width+size;i++) for(int j=0;j<=src.image().height+size;j++)
                     prefixSum[i][j] += prefixSum[i-1][j];
-            for(int i=s1+1;i<=src.image.width+s1;i++) for(int j=s2+1;j<=src.image.height+s2;j++)
+            for(int i=s1+1;i<=src.image().width+s1;i++) for(int j=s2+1;j<=src.image().height+s2;j++)
                     dst(c,i-1-s1,j-1-s2) = (prefixSum[i+s1][j+s2] - prefixSum[i+s1][j-s2-1] - prefixSum[i-s1-1][j+s2] + prefixSum[i-s1-1][j-s2-1])/(size*size);
         }
         return dst;

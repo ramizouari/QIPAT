@@ -43,6 +43,9 @@
 #include "image/segmentation/OtsuSegmentation.h"
 #include "image/filter/spectral/SpectralFilter.h"
 #include "image/noise/SpeckleNoise.h"
+#include "image/filter/GaussianBlurFilter.h"
+#include "spectrum/Spectrum3DView.h"
+#include "spectrum/SpectrumView.h"
 
 namespace GUI {
     MainWindow::MainWindow(QWidget *parent) :
@@ -85,6 +88,7 @@ namespace GUI {
         auto zoomOutAction=viewMenu->addAction("Zoom out", imageLabel, &ImageView::zoomOut, QKeySequence::ZoomOut);
         //auto normalSizeAction=viewMenu->addAction("Normal size", imageLabel, &ImageView::normalSize);
         //auto fitToWindowAction=viewMenu->addAction("Fit to window", imageLabel, &ImageView::fitToWindow);
+        auto spectrumAction=viewMenu->addAction("Spectrum", this, &MainWindow::showSpectrum);
         menuBar()->addMenu(viewMenu);
 
         statsMenu = new QMenu("Stats", this);
@@ -226,7 +230,35 @@ namespace GUI {
     }
 
     void MainWindow::addGaussianBlurFilter() {
-
+        options::FilterDialog dialog(this);
+        QDoubleSpinBox *stdXInput = new QDoubleSpinBox(&dialog),*stdYInput=new QDoubleSpinBox(&dialog);
+        QSpinBox *stdCountInput=new QSpinBox(&dialog);
+        stdXInput->setRange(0, imageLabel->getData()->width);
+        stdYInput->setRange(0, imageLabel->getData()->height);
+        stdCountInput->setRange(1, 30);
+        stdXInput->setValue(1);
+        stdYInput->setValue(1);
+        stdCountInput->setValue(3);
+        dialog.addWidget("Standard deviation X:", stdXInput);
+        dialog.addWidget("Standard Deviation Y:",stdYInput);
+        dialog.addWidget("Standard Deviation Count:",stdCountInput);
+        auto paddingInput =dialog.createPaddingInput();
+        dialog.finalize();
+        connect(&dialog, &QDialog::accepted, [=,&dialog]() {
+            image::filter::GaussianBlurFilter gaussianBlurFilter(stdXInput->value(),stdYInput->value(),stdCountInput->value());
+            std::unique_ptr<image::Padding> padding=options::PaddingInput::getPadding(paddingInput->currentIndex(),*imageLabel->getData());
+            image::Image oldImage=*imageLabel->getData();
+            if(padding)
+                *imageLabel->getData() = std::move(gaussianBlurFilter.apply(*padding));
+            else
+                *imageLabel->getData() = std::move(gaussianBlurFilter.apply(*imageLabel->getData()));
+            imageInformationBar->update(*imageLabel->getData());
+            imageLabel->updateQImage();
+            QString msg=tr("Gaussian blur filter applied, Signal to Noise Ratio: ");
+            msg+=QString::number((double) image::stats::signalToNoiseRatio(oldImage, *imageLabel->getData()));
+            statusBar()->showMessage(msg);
+        });
+        dialog.exec();
     }
 
     void MainWindow::addSpeckleNoise() {
@@ -468,5 +500,13 @@ Created by:
         *imageLabel->getData() = std::move(filter.apply(*imageLabel->getData()));
         imageLabel->updateQImage();
         imageInformationBar->update(*imageLabel->getData());
+    }
+
+    void MainWindow::showSpectrum() {
+        //auto window=GUI::spectrum::test::createGraph(*imageLabel->getData(),this);
+        auto spectrum=new spectrum::SpectrumView(*imageLabel->getData(),this);
+        spectrum->setWindowTitle("Spectrum");
+        spectrum->setWindowFlags(Qt::Window);
+        spectrum->show();
     }
 } // GUI

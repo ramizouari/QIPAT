@@ -17,7 +17,7 @@ namespace image::filter {
 
         void apply(const Image &src, Image &dst) const;
         [[nodiscard]] virtual Image apply(const Image &src) const = 0;
-        [[nodiscard]] virtual Image apply(const Padding &src) const = 0;
+        [[nodiscard]] virtual Image apply(Padding &src) const = 0;
         Image operator()(const Image &src) const;
         void operator()(const Image &src, Image &dst) const;
     };
