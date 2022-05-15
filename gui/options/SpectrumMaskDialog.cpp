@@ -54,6 +54,8 @@ namespace GUI::options {
             connect(dialogButtonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
             connect(previewButton,&QPushButton::clicked,this,&SpectrumMaskDialog::preview);
             resize(500,500);
+
+            dynamic_cast<RelationalEquationMaskForm*>(relationalEquationForm)->setImage(view->getSpectrum(),view->getTotalEnergy());
         }
 
     void SpectrumMaskDialog::preview() {

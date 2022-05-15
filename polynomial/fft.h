@@ -10,7 +10,10 @@
 #include "nt/number_theory.h"
 #include <algorithm>
 #include <optional>
+#include <thread>
+#include <future>
 #include "nt/modular_arithmetic.h"
+#include "functional/zip.h"
 
 namespace fft {
     using namespace poly;
@@ -82,6 +85,64 @@ namespace fft {
         static factoriser &get_factoriser() {
             return F_ref.value();
         }
+    };
+
+    struct parallel_implementation
+    {
+        inline static unsigned int HARD_CONCURRENCY=std::thread::hardware_concurrency();
+        inline static unsigned int SOFT_CONCURRENCY=8*HARD_CONCURRENCY;
+    };
+
+
+    template<bool is_inverse = false>
+    struct parallel_fast_fourier :public fast_fourier<is_inverse> , protected parallel_implementation {
+        using fast_fourier<is_inverse>::n;
+        using fast_fourier<is_inverse>::w;
+        using fast_fourier<is_inverse>::sign;
+        using fast_fourier<is_inverse>::use_normalized;
+        using fast_fourier<is_inverse>::F_ref;
+        using fast_fourier<is_inverse>::fast_fourier;
+        using fast_fourier<is_inverse>::normalized;
+        using fast_fourier<is_inverse>::operator();
+        using parallel_implementation::HARD_CONCURRENCY;
+        using parallel_implementation::SOFT_CONCURRENCY;
+        inline static std::atomic<unsigned int> counter=0;
+
+        virtual std::vector<IC> unnormalized(const std::vector<IC> &X) const {
+            if(counter > SOFT_CONCURRENCY)
+                return fast_fourier<is_inverse>::unnormalized(X);
+            if (n == 1)
+                return X;
+            counter++;
+            auto &F = F_ref.value().get();
+            auto p = F.smallest_divisor(n), q = n / p;
+            fast_fourier<is_inverse> FFT(q);
+            std::vector<std::vector<IC>> U(p, std::vector<IC>(q));
+            for (int i = 0; i < n; i++)
+                U[i % p][i / p] = X[i];
+            std::vector<std::vector<IC>> V(p);
+            auto L=p/SOFT_CONCURRENCY;
+            std::vector<std::future<std::vector<IC>>> futures;
+            for(int i=0;i<p;i++)
+                futures.emplace_back(std::async(std::launch::async,&fast_fourier<is_inverse>::unnormalized,&FFT,U[i]));
+            for(auto [v,f]: functional::zip(V,futures))
+                v=f.get();
+            std::vector<IC> R(n);
+            IC z = std::pow(w, q);
+            IC t = 1;
+            for (int i = 0; i < p; i++, t *= z) {
+                IC h1 = 1, h2 = 1;
+                for (int j = 0; j < p; j++, h1 *= t, h2 *= w) {
+                    IC h3 = 1;
+                    for (int k = 0; k < q; k++, h3 *= h2)
+                        R[i * q + k] += h1 * h3 * V[j][k];
+                }
+            }
+            counter--;
+            return R;
+        }
+
+
     };
 
 /*
@@ -314,6 +375,59 @@ namespace fft {
         }
     };
 
+    template<int n, bool is_inverse = false>
+    struct parallel_multidimensional_fft : public multidimensional_fft<n, is_inverse>, protected parallel_implementation {
+
+        using parallel_implementation::HARD_CONCURRENCY;
+        using parallel_implementation::SOFT_CONCURRENCY;
+        using multidimensional_fft<n, is_inverse>::shape;
+        using multidimensional_fft<n, is_inverse>::multidimensional_fft;
+
+        using IC = std::complex<real>;
+
+        tensor<n, IC> operator()(const tensor<n, IC> &T)  {
+            tensor<n, IC> V(shape[0]);
+            std::array<int, n - 1> subshape = {};
+            for (int i = 1; i < n; i++)
+                subshape[i - 1] = shape[i];
+            std::vector<std::future<void>> futures;
+            multidimensional_fft<n - 1, is_inverse> subFFT(subshape);
+            auto L=shape[0]/SOFT_CONCURRENCY;
+            parallel_fast_fourier<is_inverse> FFT_1D(shape[0]);
+            for (int i = 0; i < SOFT_CONCURRENCY+1; i++)
+                futures.emplace_back(std::async(std::launch::async,[&,i] ()
+                    {
+                        auto limit=(i==SOFT_CONCURRENCY?shape[0]%SOFT_CONCURRENCY:L);
+                        for(int j=0;j<limit;j++)
+                            V[i*L+j] = subFFT(T[i*L+j]);
+                    }));
+            for (auto &f: futures)
+                f.get();
+            std::array<int, n - 1> S;
+            for (auto &s: S)
+                s = 0;
+
+            std::vector<std::vector<IC>> R(shape[0]);
+            do {
+                std::vector<IC> Z;
+                for (int i = 0; i < shape[0]; i++)
+                    Z.push_back(get<IC, n - 1>(V[i], S));
+                auto W = FFT_1D(Z);
+                for (int i = 0; i < shape[0]; i++)
+                    R[i].push_back(W[i]);
+                int k;
+                for (k = 0; k < n - 1 && S[k] == subshape[k] - 1; k++)
+                    S[k] = 0;
+                if (k < n - 1)
+                    S[k]++;
+            } while (std::any_of(S.begin(), S.end(), [](auto x) -> bool { return x > 0; }));
+            tensor<n, IC> Y(shape[0]);
+            for (int i = 0; i < shape[0]; i++)
+                Y[i] = reshape<IC, n - 1>(R[i], subshape);
+            return Y;
+        }
+    };
+
     template<bool is_inverse>
     struct multidimensional_fft<0, is_inverse> {
         using IC = std::complex<real>;
@@ -324,6 +438,9 @@ namespace fft {
             return O;
         }
     };
+
+    template<bool is_inverse>
+    struct parallel_multidimensional_fft<0,is_inverse> : public multidimensional_fft<0,is_inverse>{};
 
 /*
  * Fast Number Theoretic Transform (Fourier Transform over cyclic fields)

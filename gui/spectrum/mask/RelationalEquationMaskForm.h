@@ -7,7 +7,7 @@
 
 #include <QLineEdit>
 #include "MaskForm.h"
-#include "parser/RelationParser.h"
+#include "parser/PlanarRelationParser.h"
 #include <QTextEdit>
 #include <QPlainTextEdit>
 
@@ -19,9 +19,13 @@ namespace GUI::options {
 
             explicit RelationalEquationMaskForm(int width, int height, QWidget *parent = nullptr);
             ~RelationalEquationMaskForm() override = default;
+            void setImage(const image::Image &img,image::Real totalEnergy);
+            void setImage(const image::Image *imagePtr, image::Real totalEnergy);
             std::vector<std::vector<bool>> generateMask() override;
         public:
             QPlainTextEdit* expressionInput;
+            const image::Image *imagePtr;
+            image::Real totalEnergy;
         };
 
     } // options

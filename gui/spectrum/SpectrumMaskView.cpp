@@ -26,7 +26,7 @@ namespace GUI::spectrum {
                 E = std::max(E, P);
             }
         functional::apply_pointwise([E,max_value=img.max](auto x){ return max_value*x/E;},newImage->data);
-        for(int c=0;c<newImage->nb_channel;c++) for(int i=0;i<newImage->width;i++) for(int j=0;j<newImage->width;j++)
+        for(int c=0;c<newImage->nb_channel;c++) for(int i=0;i<newImage->width;i++) for(int j=0;j<newImage->height;j++)
             if(!mask[i][j])
                 (*newImage)(c,i,j)=0;
             else remainingEnergy+=energySpectrum->data[c][i][j];
@@ -47,7 +47,7 @@ namespace GUI::spectrum {
                     E = std::max(E, P);
                 }
         functional::apply_pointwise([E,max_value=energySpectrum->max](auto x){ return max_value * x / E;}, newImage->data);
-        for(int c=0;c<newImage->nb_channel;c++) for(int i=0;i<newImage->width;i++) for(int j=0;j<newImage->width;j++)
+        for(int c=0;c<newImage->nb_channel;c++) for(int i=0;i<newImage->width;i++) for(int j=0;j<newImage->height;j++)
                     if(mask[i][j]^invert)
                         remainingEnergy+=energySpectrum->data[c][i][j];
                     else newImage->data[c][i][j] = 0;
@@ -70,7 +70,7 @@ namespace GUI::spectrum {
                     E = std::max(E, P);
                 }
         functional::apply_pointwise([E,max_value=img.max](auto x){ return max_value*x/E;},newImage->data);
-        for(int c=0;c<newImage->nb_channel;c++) for(int i=0;i<newImage->width;i++) for(int j=0;j<newImage->width;j++)
+        for(int c=0;c<newImage->nb_channel;c++) for(int i=0;i<newImage->width;i++) for(int j=0;j<newImage->height;j++)
                     if(!mask[i][j])
                         newImage->data[c][i][j]=0;
                     else remainingEnergy+=energySpectrum->data[c][i][j];
@@ -104,7 +104,7 @@ namespace GUI::spectrum {
                     E = std::max(E, P);
                 }
         functional::apply_pointwise([E,max_value=img.max](auto x){ return max_value*x/E;},newImage->data);
-        for(int c=0;c<newImage->nb_channel;c++) for(int i=0;i<newImage->width;i++) for(int j=0;j<newImage->width;j++)
+        for(int c=0;c<newImage->nb_channel;c++) for(int i=0;i<newImage->width;i++) for(int j=0;j<newImage->height;j++)
             remainingEnergy+=energySpectrum->data[c][i][j];
         ImageView::setImage(newImage);
 
@@ -128,7 +128,7 @@ namespace GUI::spectrum {
                     E = std::max(E, P);
                 }
         functional::apply_pointwise([E,max_value=img.max](auto x){ return max_value*x/E;},newImage->data);
-        for(int c=0;c<newImage->nb_channel;c++) for(int i=0;i<newImage->width;i++) for(int j=0;j<newImage->width;j++)
+        for(int c=0;c<newImage->nb_channel;c++) for(int i=0;i<newImage->width;i++) for(int j=0;j<newImage->height;j++)
                     remainingEnergy+=energySpectrum->data[c][i][j];
         ImageView::setImage(newImage);
     }

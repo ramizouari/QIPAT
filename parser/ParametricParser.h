@@ -9,6 +9,7 @@
 #include <muParser.h>
 #include <span>
 #include "algebra/abstract_algebra.h"
+#include <variant>
 
 namespace parser {
 
@@ -36,10 +37,17 @@ namespace parser {
         ~ParametricParser() = default;
         std::vector<ResultType>  parse(const std::vector<std::array<Real,n>> &values);
         tensor<ResultType,n> parseInterval(const std::vector<Real> &mins,const std::vector<Real> &maxs,const std::vector<int> &counts);
+        template<typename Function>
+        void addDependentVariable(const std::string &name, Function &&f);
         virtual void setParameter(int index,Real val,int pos);
     protected:
         std::array<std::string,n> variableNames;
         std::array<Real,n> variables;
+        std::array<unsigned int,n> indexes;
+        using ParametricArrayType=std::array<Real,n>;
+        using IndexArrayType=std::array<unsigned int,n>;
+        using FunctionType=std::variant<std::function<Real(const ParametricArrayType &)>,std::function<Real(const IndexArrayType &)>>;
+        std::vector<std::pair<std::unique_ptr<Real>,FunctionType>> dependentVariables;
         mu::Parser parser;
     };
 
@@ -65,7 +73,7 @@ namespace parser {
             std::span<const Real> subMax(maxs.begin()+1,maxs.end());
             std::span<const int> subCount(counts.begin()+1,counts.end());
             for(int i=0;i<counts[0];i++) {
-                P.setParameter(n-m, mins[0] + i * (maxs[0] - mins[0]) / (counts[0] - 1),counts[0]);
+                P.setParameter(n-m, mins[0] + i * (maxs[0] - mins[0]) / (counts[0] - 1),i);
                 result.push_back(multiDimensionalParse<n - 1,m, ResultType>(parser,P, subMin, subMax, subCount));
             }
             return result;
@@ -93,6 +101,18 @@ namespace parser {
     template<int n, typename ResultType>
     void ParametricParser<n, ResultType>::setParameter(int index, Real val,int pos) {
         variables[index] = val;
+        for(auto &[v,f]:dependentVariables)
+            if(f.index()==0)
+                *v=std::get<0>(f)(variables);
+            else
+                *v=std::get<1>(f)(indexes);
+    }
+
+    template<int n, typename ResultType>
+    template<typename Function>
+    void ParametricParser<n, ResultType>::addDependentVariable(const std::string &name, Function &&f) {
+        dependentVariables.emplace_back(std::make_unique<Real>(0),std::forward<Function>(f));
+        parser.DefineVar(name.c_str(),dependentVariables.back().first.get());
     }
 
 
