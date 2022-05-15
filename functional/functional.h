@@ -70,23 +70,23 @@ namespace functional {
         return u;
     }
 
-    template<typename M, typename Function, typename G = base_type<M>>
+/*    template<typename M, typename Function>
     void foreach(const Function &f, M &u) {
-        if constexpr (std::is_same_v<G, M>)
+        if constexpr (!Iterable<M>)
             f(u);
         else
             for (auto &p: u)
-                foreach<std::remove_reference_t<decltype(p)>, Function, G>(f, p);
+                foreach<std::remove_reference_t<decltype(p)>, Function>(f, p);
     }
 
-    template<typename M, typename Function, typename G = base_type<M>>
+    template<typename M, typename Function>
     void foreach(const Function &f, M &&u) {
-        if constexpr (std::is_same_v<G, M>)
+        if constexpr (!Iterable<M>)
             f(u);
         else
             for (auto &&p: u)
-                foreach<std::remove_reference_t<decltype(p)>, Function, G>(f, std::move(p));
-    }
+                foreach<std::remove_reference_t<decltype(p)>, Function>(f, std::forward<>(p));
+    }*/
 
     template<typename M, typename Homeomorphism,
             typename O, typename G = typename M::base_field>

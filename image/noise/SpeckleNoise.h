@@ -20,7 +20,7 @@ namespace image::noise {
 
             ~SpeckleNoise() override = default;
 
-            void apply(Image &image) override;
+            void apply(Image &image)  override;
         };
 
     } // noise

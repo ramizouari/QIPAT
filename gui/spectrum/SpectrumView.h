@@ -11,7 +11,7 @@
 
 namespace GUI::spectrum {
 
-        class SpectrumView :public ImageView{
+        class SpectrumView : public ImageView{
         Q_OBJECT
         public:
             explicit SpectrumView(const image::Image &img,QWidget *parent = nullptr);

@@ -51,7 +51,12 @@ namespace image
         Image fast_convolution(const Image& src, const Matrix& kernel);
         Image fast_convolution(const Image& src, const Image& kernel);
 
-        Image imageSpectrum(const Image& src,int max_value=255);
+        Image imageLogSpectrum(const Image& src, int max_value=255);
+        Image imageEnergySpectrum(const Image& src, int max_value=255);
+        Image phaseTransform(const Image& src);
+        Image phaseInverseTransform(const Image &src);
+        Matrix phaseTransform(const Matrix& src);
+        Matrix phaseInverseTransform(const Matrix &src);
         Image fftTransform(const Image& src);
     }
 

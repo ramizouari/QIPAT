@@ -5,9 +5,16 @@
 #ifndef IMAGEPROCESSING_THRESHOLDSEGMENTATION_H
 #define IMAGEPROCESSING_THRESHOLDSEGMENTATION_H
 
+#include "Segmentation.h"
+
 namespace image::segmentation {
 
-    class ThresholdSegmentation {
+    class ThresholdSegmentation : public Segmentation {
+        Real threshold;
+    public:
+        explicit ThresholdSegmentation(Real threshold);
+        ~ThresholdSegmentation() override = default;
+        Image apply(const Image &image) const;
 
     };
 

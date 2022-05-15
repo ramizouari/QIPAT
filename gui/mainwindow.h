@@ -56,6 +56,8 @@ namespace GUI {
        void otsuSegmentation();
        void grayFilter();
        void addSpectralFilter();
+       void addErosion();
+       void addDilation();
     };
 } // GUI
 

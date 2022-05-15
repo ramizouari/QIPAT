@@ -10,7 +10,7 @@ namespace image::noise {
 
         ImpulsiveNoise::ImpulsiveNoise(Real probability): ImpulsiveNoise(probability,std::random_device{}()) {}
 
-        void ImpulsiveNoise::apply(Image &image) {
+        void ImpulsiveNoise::apply(Image &image)  {
             for(auto &C:image.data) for(auto &R:C) for(auto &v:R)
                 switch(distribution(rng))
                 {

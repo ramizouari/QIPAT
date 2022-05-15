@@ -46,6 +46,8 @@
 #include "image/filter/GaussianBlurFilter.h"
 #include "spectrum/Spectrum3DView.h"
 #include "spectrum/SpectrumView.h"
+#include "image/morphology/operators.h"
+#include "gui/options/SpectrumDialog.h"
 
 namespace GUI {
     MainWindow::MainWindow(QWidget *parent) :
@@ -82,10 +84,14 @@ namespace GUI {
         editMenu->addAction("Otsu",this,&MainWindow::otsuSegmentation);
         editMenu->addAction("Gray",this,&MainWindow::grayFilter);
         editMenu->addAction("Spectral", this, &MainWindow::addSpectralFilter);
+        editMenu->addAction("Erosion", this, &MainWindow::addErosion);
+        editMenu->addAction("Dilation", this, &MainWindow::addDilation);
 
         viewMenu = new QMenu("View", this);
         auto zoomInAction=viewMenu->addAction("Zoom in", imageLabel, &ImageView::zoomIn, QKeySequence::ZoomIn);
         auto zoomOutAction=viewMenu->addAction("Zoom out", imageLabel, &ImageView::zoomOut, QKeySequence::ZoomOut);
+
+
         //auto normalSizeAction=viewMenu->addAction("Normal size", imageLabel, &ImageView::normalSize);
         //auto fitToWindowAction=viewMenu->addAction("Fit to window", imageLabel, &ImageView::fitToWindow);
         auto spectrumAction=viewMenu->addAction("Spectrum", this, &MainWindow::showSpectrum);
@@ -485,28 +491,54 @@ Created by:
     }
 
     void MainWindow::addSpectralFilter() {
-        auto width=imageLabel->getData()->width;
-        auto height=imageLabel->getData()->height;
-        image::Matrix kernel(image::make_tensor(width,height));
-        for(int i=0;i<width/4;i++) for(int j=0;j<width/4;j++)
+        options::SpectrumDialog dialog(*imageLabel->getData(),this);
+        connect(&dialog, &QDialog::accepted, [this,&dialog]()
         {
-            kernel[i][j]=1;
-            kernel[i][height-1-j]=1;
-            kernel[width-1-i][j]=1;
-            kernel[width-1-i][height-1-j]=1;
-        }
-
-        image::filter::spectral::SpectralFilter filter(kernel);
-        *imageLabel->getData() = std::move(filter.apply(*imageLabel->getData()));
-        imageLabel->updateQImage();
-        imageInformationBar->update(*imageLabel->getData());
+            auto mask=dialog.getMask();
+            image::Matrix maskMatrix=image::make_tensor(imageLabel->getData()->width,imageLabel->getData()->height);
+            for(int i=0;i<imageLabel->getData()->width;i++) for(int j=0;j<imageLabel->getData()->height;j++)
+                    maskMatrix[i][j]=(mask[i][j]^dialog.isInverted())?1:0;
+            maskMatrix=image::convolution::phaseInverseTransform(maskMatrix);
+            image::filter::spectral::SpectralFilter filter(maskMatrix);
+            *imageLabel->getData() = std::move(filter.apply(*imageLabel->getData()));
+            imageLabel->updateQImage();
+            imageInformationBar->update(*imageLabel->getData());
+        });
+        dialog.exec();
     }
 
     void MainWindow::showSpectrum() {
         //auto window=GUI::spectrum::test::createGraph(*imageLabel->getData(),this);
-        auto spectrum=new spectrum::SpectrumView(*imageLabel->getData(),this);
+        auto spectrum=new spectrum::SpectrumView(*imageLabel->getData());
         spectrum->setWindowTitle("Spectrum");
         spectrum->setWindowFlags(Qt::Window);
         spectrum->show();
+    }
+
+    void MainWindow::addErosion() {
+        options::FilterDialog dialog(this);
+        auto matInput=dialog.createMatrixInput();
+        dialog.finalize();
+        connect(&dialog, &QDialog::accepted, [matInput,this]() {
+            *imageLabel->getData() = std::move(image::filter::morphology::operators::erosion(*imageLabel->getData(),matInput->getConvolutionMatrix()));
+            imageLabel->updateQImage();
+            imageInformationBar->update(*imageLabel->getData());
+        });
+        dialog.resize(600,600);
+        dialog.exec();
+    }
+
+    void MainWindow::addDilation() {
+        options::FilterDialog dialog(this);
+        auto matInput=dialog.createMatrixInput();
+        dialog.finalize();
+        connect(&dialog, &QDialog::accepted, [matInput,this]() {
+            *imageLabel->getData() = std::move(image::filter::morphology::operators::dilation(*imageLabel->getData(),matInput->getConvolutionMatrix()));
+            imageLabel->updateQImage();
+            imageInformationBar->update(*imageLabel->getData());
+        });
+        dialog.resize(600,600);
+        dialog.exec();
+
     }
 } // GUI

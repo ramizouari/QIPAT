@@ -6,16 +6,17 @@
 #define IMAGEPROCESSING_NOISE_H
 
 #include "image/Image.h"
+#include "image/Transformation.h"
 
-namespace image::noise {
+namespace image::noise{
 
-        class Noise {
+        class Noise:public NonDeterministicSelfTransformation<Image>  {
         public:
             Noise();
 
-            virtual ~Noise();
+            ~Noise() override;
 
-            virtual void apply(image::Image &image) = 0;
+            void apply(image::Image &image) override = 0;
             void operator()(image::Image &image);
         };
 

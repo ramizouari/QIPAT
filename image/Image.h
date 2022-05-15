@@ -25,16 +25,37 @@ namespace image
 
     using Real = linalg::real;
     using Complex=linalg::IC;
+    using Integer=algebra::integer;
     using Vector=linalg::d_vector<Real>;
+    using Vectori=linalg::d_vector<Integer>;
     using Vector2 = linalg::s_vector<Real,2>;
     using Vector3 = linalg::s_vector<Real,3>;
     using Vector4 = linalg::s_vector<Real,4>;
     using Vector5 = linalg::s_vector<Real,5>;
+    using Vector2i = linalg::s_vector<Integer,2>;
+    using Vector3i = linalg::s_vector<Integer,3>;
+    using Vector4i = linalg::s_vector<Integer,4>;
+    using Vector5i = linalg::s_vector<Integer,5>;
+    using Vectorc=linalg::d_vector<Complex>;
+    using Vector2c = linalg::s_vector<Complex,2>;
+    using Vector3c = linalg::s_vector<Complex,3>;
+    using Vector4c = linalg::s_vector<Complex,4>;
+    using Vector5c = linalg::s_vector<Complex,5>;
     using Matrix = linalg::d_matrix<Real>;
     using Matrix2 = linalg::s_matrix<Real,2,2>;
     using Matrix3 = linalg::s_matrix<Real,3,3>;
     using Matrix4 = linalg::s_matrix<Real,4,4>;
     using Matrix5 = linalg::s_matrix<Real,5,5>;
+    using Matrixi = linalg::d_matrix<Integer>;
+    using Matrix2i = linalg::s_matrix<Integer,2,2>;
+    using Matrix3i = linalg::s_matrix<Integer,3,3>;
+    using Matrix4i = linalg::s_matrix<Integer,4,4>;
+    using Matrix5i = linalg::s_matrix<Integer,5,5>;
+    using Matrixc = linalg::d_matrix<Complex>;
+    using Matrix2c = linalg::s_matrix<Complex,2,2>;
+    using Matrix3c = linalg::s_matrix<Complex,3,3>;
+    using Matrix4c = linalg::s_matrix<Complex,4,4>;
+    using Matrix5c = linalg::s_matrix<Complex,5,5>;
     template<int n>
     using tensor=typename tensor_t<Real,n>::tensor;
 

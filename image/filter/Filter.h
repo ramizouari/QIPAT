@@ -7,13 +7,14 @@
 
 #include "image/Image.h"
 #include "image/Padding.h"
+#include "image/Transformation.h"
 
 namespace image::filter {
 
 
-    class Filter {
+    class Filter :public Transformation<Image> {
     public:
-        virtual ~Filter() = default;
+        ~Filter() override = default;
 
         void apply(const Image &src, Image &dst) const;
         [[nodiscard]] virtual Image apply(const Image &src) const = 0;

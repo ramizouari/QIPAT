@@ -35,7 +35,8 @@ namespace linalg {
 
         d_vector() : u(n) {}
 
-        d_vector(std::vector<R> _u) : u(std::move(_u)) {}
+        d_vector(const std::vector<R> &u):u(u){};
+        d_vector(std::vector<R> &&_u) noexcept:u(std::move(u)){};
 
         d_vector(v_shape shape) : u(shape.n) {}
 
@@ -292,7 +293,7 @@ namespace linalg{
                 M[i][i] = k;
         }
 
-        d_matrix(std::vector<std::vector<R>> &&_M) : M(std::move(_M)) {}
+        d_matrix(std::vector<std::vector<R>> &&_M) noexcept : M(std::move(_M)) {}
         d_matrix(const std::vector<std::vector<R>> &_M) : M(_M) {}
 
         auto row_dim() const {

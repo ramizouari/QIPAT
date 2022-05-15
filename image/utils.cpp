@@ -105,7 +105,7 @@ namespace image
         }
 
 
-        Image imageSpectrum(const Image& src,int max_value)
+        Image imageLogSpectrum(const Image& src, int max_value)
         {
             Image dst(src.width,src.height,src.nb_channel,max_value);
             for(auto [C,D]: functional::zip(src.data,dst.data))
@@ -127,22 +127,103 @@ namespace image
                         E=std::max(E,P);
                 functional::apply_pointwise([E,max_value](auto x){ return max_value*x/E;},D);
             }
+            return phaseTransform(dst);
+        }
+
+
+        Image imageEnergySpectrum(const Image& src, int max_value)
+        {
+            Image dst(src.width,src.height,src.nb_channel,max_value);
+            for(auto [C,D]: functional::zip(src.data,dst.data))
+            {
+                auto shape=linalg::m_shape{(int)src.width,(int)src.height};
+                fft::multidimensional_fft<2> fft(shape.n,shape.m);
+                linalg::d_matrix<algebra::IC> P(0,shape);
+                int i=0,j=0;
+                for(auto [R1,R2]:functional::zip(P,C)){
+                    for(auto [x,y]:functional::zip(R1,R2))
+                        x=y;
+                }
+                auto spectrum=fft((fft::tensor<2,algebra::IC>&)P);
+                for(auto [R1,R2]:functional::zip(spectrum,D)) for(auto [x,y]:functional::zip(R1,R2))
+                        y=std::pow(x.real(),2)+std::pow(x.imag(),2);
+
+            }
+            return phaseTransform(dst);
+        }
+
+        Image phaseTransform(const Image &src) {
             image::Image I(src.width,src.height,src.nb_channel);
             for(int c=0;c<I.nb_channel;c++)
                 for(int i=0;i<I.width;i++) for(int j=0;j<I.height;j++)
+                    {
+                        if(i< I.width/2 && j< I.height/2)
+                            I(c,i+I.width/2,j+I.height/2)=src(c,i,j);
+                        else if(i>= I.width/2 && j< I.height/2)
+                            I(c,i-I.width/2,j+I.height/2)=src(c,i,j);
+                        else if(i< I.width/2 && j>= I.height/2)
+                            I(c,i+I.width/2,j-I.height/2)=src(c,i,j);
+                        else
+                            I(c,i-I.width/2,j-I.height/2)=src(c,i,j);
+                    }
+            return I;
+        }
+
+        Image phaseInverseTransform(const Image &src) {
+            image::Image I(src.width,src.height,src.nb_channel);
+            for(int c=0;c<I.nb_channel;c++)
+                for(int i=0;i<I.width;i++) for(int j=0;j<I.height;j++)
+                    {
+                        if(i< I.width/2 && j< I.height/2)
+                            I(c,i,j)=src(c,i+I.width/2,j+I.height/2);
+                        else if(i>= I.width/2 && j< I.height/2)
+                            I(c,i,j)=src(c,i-I.width/2,j+I.height/2);
+                        else if(i< I.width/2 && j>= I.height/2)
+                            I(c,i,j)=src(c,i+I.width/2,j-I.height/2);
+                        else
+                            I(c,i,j)=src(c,i-I.width/2,j-I.height/2);
+                    }
+            return I;
+        }
+
+        Matrix phaseTransform(const Matrix &src) {
+            Matrix I(0,linalg::m_shape{(int)src.row_dim(),(int)src.col_dim()});
+            int width=src.row_dim();
+            int height=src.col_dim();
+            for(int i=0;i<I.row_dim();i++) for(int j=0;j<I.col_dim();j++)
                 {
-                    if(i< I.width/2 && j< I.height/2)
-                        I(c,i+I.width/2,j+I.height/2)=dst(c,i,j);
-                    else if(i>= I.width/2 && j< I.height/2)
-                        I(c,i-I.width/2,j+I.height/2)=dst(c,i,j);
-                    else if(i< I.width/2 && j>= I.height/2)
-                        I(c,i+I.width/2,j-I.height/2)=dst(c,i,j);
+                    if(i< width/2 && j< height/2)
+                        I[i+width/2][j+height/2]=src[i][j];
+                    else if(i>= width/2 && j< height/2)
+                        I[i-width/2][j+height/2]=src[i][j];
+                    else if(i< width/2 && j>= height/2)
+                        I[i+width/2][j-height/2]=src[i][j];
                     else
-                        I(c,i-I.width/2,j-I.height/2)=dst(c,i,j);
+                        I[i-width/2][j-height/2]=src[i][j];
+                }
+            return I;
+        }
+        Matrix phaseInverseTransform(const Matrix &src) {
+            Matrix I(0,linalg::m_shape{(int)src.row_dim(),(int)src.col_dim()});
+            int width=src.row_dim();
+            int height=src.col_dim();
+            for(int i=0;i<I.row_dim();i++) for(int j=0;j<I.col_dim();j++)
+                {
+                    if(i< width/2 && j< height/2)
+                        I[i][j]=src[i+width/2][j+height/2];
+                    else if(i>= width/2 && j< height/2)
+                        I[i][j]=src[i-width/2][j+height/2];
+                    else if(i< width/2 && j>= height/2)
+                        I[i][j]=src[i+width/2][j-height/2];
+                    else
+                        I[i][j]=src[i-width/2][j-height/2];
                 }
             return I;
         }
     }
+
+
+
 
     Matrix as_matrix(const Image& src,int channel)
     {
@@ -171,10 +252,7 @@ namespace image
     }
 
 
-    Image fftTransform(const Image& src)
-    {
 
-    }
 
 }
 
