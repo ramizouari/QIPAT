@@ -53,11 +53,16 @@ namespace image
 
         Image imageLogSpectrum(const Image& src, int max_value=255);
         Image imageEnergySpectrum(const Image& src, int max_value=255);
+        tensor_t<Complex,3>::tensor imageToSpectrum(const Image& src);
+        Image spectrumToImage(const tensor_t<Complex,3>::tensor& src);
         Image phaseTransform(const Image& src);
         Image phaseInverseTransform(const Image &src);
         Matrix phaseTransform(const Matrix& src);
         Matrix phaseInverseTransform(const Matrix &src);
         Image fftTransform(const Image& src);
+        std::pair<Image, Image> spectrumToImagePair(const tensor_t<Complex,3>::tensor &src) ;
+        tensor_t<Complex,3>::tensor imagePairToSpectrum(const std::pair<Image,Image> &P);
+        tensor_t<Complex,3>::tensor imagePairToSpectrum(const Image &A,const Image &B);
     }
 
     [[maybe_unused]] Matrix as_matrix(const Image& src,int channel=0);

@@ -4,18 +4,18 @@
 
 #include "Padding.h"
 
-image::Padding::Padding(Image &img):imagePtr(&img) {
+image::Padding::Padding(const Image &img):imagePtr(&img) {
 }
 
 image::Real image::Padding::operator()(int x, int y) const {
     return this->operator()(0,x,y);
 }
 
-image::Image &image::Padding::image() const {
+const image::Image &image::Padding::image() const {
     return *imagePtr;
 }
 
-void image::Padding::setImage(image::Image &image) {
+void image::Padding::setImage(const image::Image &image) {
     imagePtr = &image;
 }
 
@@ -25,11 +25,11 @@ image::Real image::ConstantPadding::operator()(int c, int x, int y) const {
     return value;
 }
 
-image::ConstantPadding::ConstantPadding(image::Image &img, image::Real value):Padding(img),value(value) {
+image::ConstantPadding::ConstantPadding(const image::Image &img, image::Real value):Padding(img),value(value) {
 }
 
 
-image::ZeroPadding::ZeroPadding(image::Image &image) : ConstantPadding(image,0) {
+image::ZeroPadding::ZeroPadding(const image::Image &image) : ConstantPadding(image,0) {
 
 }
 

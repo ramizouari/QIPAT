@@ -55,8 +55,9 @@ namespace GUI {
        void addCustomConvolutionFilter();
        void otsuSegmentation();
        void grayFilter();
-       void addSpectralFilter();
-       void addErosion();
+       void addSpectralMask();
+        void addSpectralFilter();
+        void addErosion();
        void addDilation();
     };
 } // GUI

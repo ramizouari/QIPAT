@@ -40,9 +40,7 @@ namespace image
                 x=y;
             auto X=fft((fft::tensor<2,linalg::IC>&)P);
             auto &Y=kernel;
-            /*
-             * Possible because they are really the same type, but the compiler was not able to prove it
-             * */
+
             fft::tensor<2,algebra::IC> Z(shape.n,fft::tensor<1,algebra::IC>(shape.m));
             for(auto [R1,R2,R3]:functional::zip(X,Y,Z)) for(auto [x,y,z]:functional::zip(R1,R2,R3))
                     z=x*y;
@@ -134,18 +132,10 @@ namespace image
         Image imageEnergySpectrum(const Image& src, int max_value)
         {
             Image dst(src.width,src.height,src.nb_channel,max_value);
-            for(auto [C,D]: functional::zip(src.data,dst.data))
+            auto spectrum= imageToSpectrum(src);
+            for(auto [C,D]: functional::zip(spectrum,dst.data))
             {
-                auto shape=linalg::m_shape{(int)src.width,(int)src.height};
-                fft::multidimensional_fft<2> fft(shape.n,shape.m);
-                linalg::d_matrix<algebra::IC> P(0,shape);
-                int i=0,j=0;
-                for(auto [R1,R2]:functional::zip(P,C)){
-                    for(auto [x,y]:functional::zip(R1,R2))
-                        x=y;
-                }
-                auto spectrum=fft((fft::tensor<2,algebra::IC>&)P);
-                for(auto [R1,R2]:functional::zip(spectrum,D)) for(auto [x,y]:functional::zip(R1,R2))
+                for(auto [R1,R2]:functional::zip(C,D)) for(auto [x,y]:functional::zip(R1,R2))
                         y=std::pow(x.real(),2)+std::pow(x.imag(),2);
 
             }
@@ -219,6 +209,74 @@ namespace image
                         I[i][j]=src[i-width/2][j-height/2];
                 }
             return I;
+        }
+
+        tensor_t<Complex, 3>::tensor imageToSpectrum(const Image &src) {
+            tensor_t<Complex,3>::tensor dst=tensor_t<Complex,3>::tensor(
+                    src.nb_channel,tensor_t<Complex,2>::tensor (src.width,tensor_t<Complex,1>::tensor (src.height))
+                    );
+            for(auto [C,D]: functional::zip(src.data,dst))
+            {
+                auto shape=linalg::m_shape{(int)src.width,(int)src.height};
+                fft::multidimensional_fft<2> fft(shape.n,shape.m);
+                linalg::d_matrix<algebra::IC> P(0,shape);
+                int i=0,j=0;
+                for(auto [R1,R2]:functional::zip(P,C)){
+                    for(auto [x,y]:functional::zip(R1,R2))
+                        x=y;
+                }
+                auto spectrum=fft((fft::tensor<2,algebra::IC>&)P);
+                for(auto [R1,R2]:functional::zip(spectrum,D)) for(auto [x,y]:functional::zip(R1,R2))
+                        y=x;
+            }
+            return dst;
+        }
+
+        Image spectrumToImage(const tensor_t<Complex,3>::tensor &src) {
+            Image dst(src.front().size(),src.front().front().size(),src.size());
+            for(auto [C,D]: functional::zip(src,dst.data))
+            {
+                auto shape=linalg::m_shape{(int)dst.width,(int)dst.height};
+                fft::multidimensional_fft<2,true> ifft(shape.n,shape.m);
+                auto image=ifft(C);
+                for(auto [R1,R2]:functional::zip(image,D)) for(auto [x,y]:functional::zip(R1,R2))
+                        y=std::clamp<Real>(x.real()/(shape.n*shape.m),0,255);
+            }
+            return dst;
+        }
+
+        std::pair<Image, Image> spectrumToImagePair(const tensor_t<Complex,3>::tensor &src) {
+            int width=src.front().size();
+            int height=src.front().front().size();
+            int nb_channel=src.size();
+            Image I1(width,height,nb_channel);
+            Image I2(width,height,nb_channel);
+            for(auto [A,B,C] : functional::zip(src,I1.data,I2.data))
+                for(auto [R1,R2,R3]:functional::zip(A,B,C))
+                    for(auto [x,y,z]:functional::zip(R1,R2,R3))
+                        {
+                            y=x.real();
+                            z=x.imag();
+                        }
+            return std::make_pair(I1,I2);
+        }
+
+        tensor_t<Complex,3>::tensor imagePairToSpectrum(const std::pair<Image,Image> &P)
+        {
+            int width=P.first.width;
+            int height=P.first.height;
+            int nb_channel=P.first.nb_channel;
+            tensor_t<Complex,3>::tensor dst(nb_channel,tensor_t<Complex,2>::tensor (width,tensor_t<Complex,1>::tensor (height)));
+            for(auto [A,B,C] : functional::zip(P.first.data,P.second.data,dst))
+                for(auto [R1,R2,R3]:functional::zip(A,B,C))
+                    for(auto [x,y,z]:functional::zip(R1,R2,R3))
+                        z=x+y*algebra::IC(0,1);
+
+            return dst;
+        }
+
+        tensor_t<Complex, 3>::tensor imagePairToSpectrum(const Image &A, const Image &B) {
+            return imagePairToSpectrum(std::make_pair(std::cref(A),std::cref(B)));
         }
     }
 

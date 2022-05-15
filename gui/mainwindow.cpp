@@ -47,7 +47,8 @@
 #include "spectrum/Spectrum3DView.h"
 #include "spectrum/SpectrumView.h"
 #include "image/morphology/operators.h"
-#include "gui/options/SpectrumDialog.h"
+#include "gui/options/SpectrumMaskDialog.h"
+#include "gui/options/SpectrumFilterDialog.h"
 
 namespace GUI {
     MainWindow::MainWindow(QWidget *parent) :
@@ -83,7 +84,8 @@ namespace GUI {
         editMenu->addAction("Contrast", this,&MainWindow::mapContrast);
         editMenu->addAction("Otsu",this,&MainWindow::otsuSegmentation);
         editMenu->addAction("Gray",this,&MainWindow::grayFilter);
-        editMenu->addAction("Spectral", this, &MainWindow::addSpectralFilter);
+        editMenu->addAction("Spectral Mask", this, &MainWindow::addSpectralMask);
+        editMenu->addAction("Spectral Filter", this, &MainWindow::addSpectralFilter);
         editMenu->addAction("Erosion", this, &MainWindow::addErosion);
         editMenu->addAction("Dilation", this, &MainWindow::addDilation);
 
@@ -490,8 +492,8 @@ Created by:
         dialog.exec();
     }
 
-    void MainWindow::addSpectralFilter() {
-        options::SpectrumDialog dialog(*imageLabel->getData(),this);
+    void MainWindow::addSpectralMask() {
+        options::SpectrumMaskDialog dialog(*imageLabel->getData(), this);
         connect(&dialog, &QDialog::accepted, [this,&dialog]()
         {
             auto mask=dialog.getMask();
@@ -540,5 +542,19 @@ Created by:
         dialog.resize(600,600);
         dialog.exec();
 
+    }
+
+    void MainWindow::addSpectralFilter() {
+        options::SpectrumFilterDialog dialog(*imageLabel->getData(), this);
+        connect(&dialog, &QDialog::accepted, [this,&dialog]()
+        {
+            auto [X,Y] = dialog.apply();
+            X=image::convolution::phaseInverseTransform(X);
+            Y=image::convolution::phaseInverseTransform(Y);
+            *imageLabel->getData() = image::convolution::spectrumToImage(image::convolution::imagePairToSpectrum(X,Y));
+            imageLabel->updateQImage();
+            imageInformationBar->update(*imageLabel->getData());
+        });
+        dialog.exec();
     }
 } // GUI

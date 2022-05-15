@@ -4,19 +4,20 @@
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
-#include "SpectrumDialog.h"
-#include "MaskForm.h"
-#include "RectangleMaskForm.h"
-#include "CircleMaskForm.h"
+#include "SpectrumMaskDialog.h"
+#include "gui/spectrum/mask/MaskForm.h"
+#include "gui/spectrum/mask/RectangleMaskForm.h"
+#include "gui/spectrum/mask/CircleMaskForm.h"
+#include "gui/spectrum/mask/RelationalEquationMaskForm.h"
 #include <QPushButton>
 
 namespace GUI::options {
-        SpectrumDialog::SpectrumDialog(const image::Image &img, QWidget *parent) {
+        SpectrumMaskDialog::SpectrumMaskDialog(const image::Image &img, QWidget *parent) {
             layout = new QVBoxLayout;
             layout->setObjectName("SpectrumDialogLayout");
             subLayout = new QHBoxLayout;
             subLayout->setObjectName("SpectrumDialogSubLayout");
-            view=new spectrum::SpectrumFilterView(img,this);
+            view=new spectrum::SpectrumMaskView(img, this);
             subLayout->addWidget(view);
 
 
@@ -25,12 +26,14 @@ namespace GUI::options {
             maskChoice = new QComboBox(this);
             maskChoice->addItem("Rectangle");
             maskChoice->addItem("Circle");
-            maskChoice->addItem("Polygon");
+            maskChoice->addItem("Relation");
             stackedWidget=new QStackedWidget(this);
             rectangleForm=new RectangleMaskForm(img.width,img.height,stackedWidget);
             stackedWidget->addWidget(rectangleForm);
             circleForm=new CircleMaskForm(img.width,img.height,stackedWidget);
             stackedWidget->addWidget(circleForm);
+            relationalEquationForm=new RelationalEquationMaskForm(img.width,img.height,stackedWidget);
+            stackedWidget->addWidget(relationalEquationForm);
 
             connect(maskChoice, &QComboBox::currentIndexChanged, stackedWidget, &QStackedWidget::setCurrentIndex);
             formLayout->addRow("Choose mask type:",maskChoice);
@@ -49,20 +52,20 @@ namespace GUI::options {
             setLayout(layout);
             connect(dialogButtonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
             connect(dialogButtonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
-            connect(previewButton,&QPushButton::clicked,this,&SpectrumDialog::preview);
+            connect(previewButton,&QPushButton::clicked,this,&SpectrumMaskDialog::preview);
             resize(500,500);
         }
 
-    void SpectrumDialog::preview() {
+    void SpectrumMaskDialog::preview() {
             view->setMask(dynamic_cast<MaskForm*>(stackedWidget->currentWidget())->generateMask(),invertMaskCheckBox->isChecked());
             statusBar->showMessage("Remaining Energy: "+QString::number(static_cast<double>(view->getRemainingEnergy()/view->getTotalEnergy()*100))+"%");
     }
 
-    std::vector<std::vector<bool>> SpectrumDialog::getMask() {
+    std::vector<std::vector<bool>> SpectrumMaskDialog::getMask() {
         return view->getMask();
     }
 
-    bool SpectrumDialog::isInverted() const {
+    bool SpectrumMaskDialog::isInverted() const {
         return invertMaskCheckBox->isChecked();
     }
 } // options

@@ -1,21 +1,20 @@
 //
-// Created by ramizouari on 15/05/22.
+// Created by ramizouari on 14/05/22.
 //
 
-#ifndef IMAGEPROCESSING_SPECTRUMFILTERVIEW_H
-#define IMAGEPROCESSING_SPECTRUMFILTERVIEW_H
+#ifndef IMAGEPROCESSING_SPECTRUMMASKVIEW_H
+#define IMAGEPROCESSING_SPECTRUMMASKVIEW_H
 
-#include "gui/imageview.h"
+#include "SpectrumView.h"
 
 namespace GUI::spectrum {
 
-        class SpectrumFilterView :public ImageView {
-            Q_OBJECT
+        class SpectrumMaskView: public ImageView {
             std::unique_ptr<image::Image> energySpectrum;
-            std::unique_ptr<image::Image> unfilteredSpectrum;
+            std::vector<std::vector<bool>> mask;
             image::Real totalEnergy,remainingEnergy;
         public:
-            explicit SpectrumFilterView(const image::Image & img, QWidget *parent = nullptr);
+            explicit SpectrumMaskView(const image::Image & img, QWidget *parent = nullptr);
             void setImage(const image::Image &img);
             void setImage(const image::Image &img,const std::vector<std::vector<bool>> &mask);
             void setSpectrum(const image::Image &img);
@@ -24,9 +23,9 @@ namespace GUI::spectrum {
             image::Image& getSpectrum() const;
             [[nodiscard]] image::Real getTotalEnergy() const;
             [[nodiscard]] image::Real getRemainingEnergy() const;
-
+            [[nodiscard]] const std::vector<std::vector<bool>> & getMask() const;
         };
 
     } // spectrum
 
-#endif //IMAGEPROCESSING_SPECTRUMFILTERVIEW_H
+#endif //IMAGEPROCESSING_SPECTRUMMASKVIEW_H

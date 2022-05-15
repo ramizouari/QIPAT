@@ -13,28 +13,28 @@ namespace image
     class Padding
     {
     protected:
-        Image* imagePtr;
+        const Image* imagePtr;
     public:
-        explicit Padding(Image &image);
+        explicit Padding(const Image &image);
         virtual ~Padding() = default;
         Real operator()(int x, int y) const;
         virtual Real operator()(int c,int x, int y) const = 0;
-        [[nodiscard]] Image& image() const;
-        void setImage(Image &image);
+        [[nodiscard]] const Image& image() const;
+        void setImage(const Image &image);
     };
 
     class ConstantPadding : public Padding
     {
         Real value;
     public:
-        ConstantPadding(Image &image, Real value);
+        ConstantPadding(const Image &image, Real value);
         Real operator()(int c,int x, int y) const override;
     };
 
     class ZeroPadding : public ConstantPadding
     {
     public:
-        explicit ZeroPadding(Image &image);
+        explicit ZeroPadding(const Image &image);
     };
 
     class SymmetricPadding : public Padding {

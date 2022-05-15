@@ -25,5 +25,9 @@ namespace image::filter {
         return apply(src.image());
     }
 
+    Image Filter::apply(Padding &&src) const {
+        return apply(src);
+    }
+
 
 } // image

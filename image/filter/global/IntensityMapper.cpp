@@ -23,7 +23,7 @@ namespace image::filter::global {
             for(int k=points[i].first;k<points[i+1].first;k++)
                 mapper[k]=alpha*(k-points[i].first)+points[i].second;
         }
-        mapper[255]=255;
+        mapper[points.back().first]=points.back().second;
     }
 
     IntensityMapper::IntensityMapper(std::vector<Vector2> points)

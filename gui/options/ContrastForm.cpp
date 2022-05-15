@@ -68,14 +68,14 @@ namespace GUI::options {
                 yCoordinate->setValue(0);
                 removeButton->setEnabled(false);
                 xCoordinate->setReadOnly(true);
-                yCoordinate->setReadOnly(true);
+                //yCoordinate->setReadOnly(true);
                 break;
             case Type::LAST:
                 xCoordinate->setValue(255);
                 yCoordinate->setValue(255);
                 removeButton->setEnabled(false);
                 xCoordinate->setReadOnly(true);
-                yCoordinate->setReadOnly(true);
+                //yCoordinate->setReadOnly(true);
                 break;
             case Type::MIDDLE:
                 xCoordinate->setValue(128);
