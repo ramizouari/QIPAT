@@ -8,6 +8,7 @@
 #include "image/utils.h"
 #include "functional/zip.h"
 #include "gui/spectrum/filter/MedianForm.h"
+#include "gui/spectrum/filter/FunctionFilterForm.h"
 
 namespace GUI::options {
         SpectrumFilterDialog::SpectrumFilterDialog(const image::Image &img, QWidget *parent):QDialog(parent) {
@@ -35,6 +36,8 @@ namespace GUI::options {
             stackedWidget->addWidget(meanForm);
             medianForm=new spectrum::filter::MedianForm(img.width,img.height,stackedWidget);
             stackedWidget->addWidget(medianForm);
+            functionalForm=new spectrum::filter::FunctionFilterForm(img.width,img.height,stackedWidget);
+            stackedWidget->addWidget(functionalForm);
 
             connect(maskChoice, &QComboBox::currentIndexChanged, stackedWidget, &QStackedWidget::setCurrentIndex);
             formLayout->addRow("Choose mask type:",maskChoice);

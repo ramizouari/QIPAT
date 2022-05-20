@@ -52,12 +52,13 @@ namespace GUI {
        void about();
        void histogramEqualization();
        void mapContrast();
+       void mapContrastSpline();
        void addCustomConvolutionFilter();
        void otsuSegmentation();
        void grayFilter();
        void addSpectralMask();
-        void addSpectralFilter();
-        void addErosion();
+       void addSpectralFilter();
+       void addErosion();
        void addDilation();
     };
 } // GUI

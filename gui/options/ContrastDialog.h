@@ -26,6 +26,20 @@ namespace GUI::options {
             QDialogButtonBox *dialogButtonBox;
         };
 
+    class SplineContrastDialog:public QDialog {
+    Q_OBJECT
+    public:
+        explicit SplineContrastDialog(QWidget *parent = nullptr);
+
+        std::vector<image::Vector2> getPoints();
+        std::vector<std::pair<image::Real,image::Real>> getPointsPair();
+    private:
+        SplineContrastForm* form;
+        ContrastSplineTransformationView *contrastView;
+        QLayout *layout,*subLayout;
+        QDialogButtonBox *dialogButtonBox;
+    };
+
     } // options
 
 #endif //IMAGEPROCESSING_CONTRASTDIALOG_H

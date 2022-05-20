@@ -82,6 +82,7 @@ namespace GUI {
         auto customConvolutionFilterAction=filterMenu->addAction("Custom Convolution", this, &MainWindow::addCustomConvolutionFilter);
         editMenu->addAction("Histogram Equalization", this, &MainWindow::histogramEqualization);
         editMenu->addAction("Contrast", this,&MainWindow::mapContrast);
+        editMenu->addAction("Contrast Spline", this,&MainWindow::mapContrastSpline);
         editMenu->addAction("Otsu",this,&MainWindow::otsuSegmentation);
         editMenu->addAction("Gray",this,&MainWindow::grayFilter);
         editMenu->addAction("Spectral Mask", this, &MainWindow::addSpectralMask);
@@ -554,6 +555,18 @@ Created by:
             *imageLabel->getData() = image::convolution::spectrumToImage(image::convolution::imagePairToSpectrum(X,Y));
             imageLabel->updateQImage();
             imageInformationBar->update(*imageLabel->getData());
+        });
+        dialog.exec();
+    }
+
+    void MainWindow::mapContrastSpline() {
+        options::SplineContrastDialog dialog(this);
+        connect(&dialog,&QDialog::accepted,[&dialog,this]()
+        {
+            image::filter::global::IntensityMapper mapper(dialog.getPoints());
+            *imageLabel->getData() = std::move(mapper.apply(*imageLabel->getData()));
+            imageInformationBar->update(*imageLabel->getData());
+            imageLabel->updateQImage();
         });
         dialog.exec();
     }

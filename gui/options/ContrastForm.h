@@ -7,6 +7,7 @@
 
 #include <QWidget>
 #include <QSpinBox>
+#include "image/Image.h"
 
 namespace GUI::options {
 
@@ -45,6 +46,43 @@ namespace GUI::options {
             QSpinBox *yCoordinate;
             QPushButton *removeButton;
         };
+
+    class SplineContrastForm :public QWidget{
+    Q_OBJECT
+    public:
+        explicit SplineContrastForm(QWidget *parent = nullptr);
+        ~SplineContrastForm() override = default;
+    signals:
+        void valueUpdated(int,int,int,image::Real);
+        void requestPointAdd(int);
+        void requestPointAdd();
+        void requestPointRemove(int);
+    private:
+        std::vector<std::pair<QSpinBox*,QSpinBox*>> spinBoxes;
+        std::pair<QSpinBox*,QSpinBox*> lastSpinBox;
+        QPushButton *addPointButton;
+    };
+
+    class SplineContrastFormRow :public QWidget{
+    Q_OBJECT
+    public:
+        enum class Type{
+            FIRST,
+            MIDDLE,
+            LAST
+        };
+        explicit SplineContrastFormRow(Type type,QWidget *parent = nullptr);
+        ~SplineContrastFormRow() override = default;
+    signals:
+        void valueUpdated(int,int,image::Real);
+        void requestRemove();
+
+    private:
+        QSpinBox *xCoordinate;
+        QSpinBox *yCoordinate;
+        QDoubleSpinBox *yDerivative;
+        QPushButton *removeButton;
+    };
     } // options
 
 #endif //IMAGEPROCESSING_CONTRASTFORM_H
