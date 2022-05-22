@@ -10,6 +10,8 @@
 #include <span>
 #include "algebra/abstract_algebra.h"
 #include <variant>
+#include <cmath>
+#include <numeric>
 
 namespace parser {
 
@@ -28,7 +30,39 @@ namespace parser {
     template<typename R, int n>
     using tensor=typename tensor_t<R ,n>::tensor;
 
+    enum Precedence
+    {
+        NONE=0,
+        OR,
+        AND,
+        LOGIC,
+        COMPARISON,
+        ADDITION,
+        MULTIPLICATION,
+        UNARY=MULTIPLICATION,
+        EXPONENTIATION
+    };
+
+    enum Associativity
+    {
+        LEFT=0,
+        RIGHT
+    };
+
+
     using Real=double;
+
+    namespace FunctionTypes
+    {
+        using UnaryFunctionPtr = Real(*)(Real);
+        using BinaryFunctionPtr = Real(*)(Real,Real);
+        using TernaryFunctionPtr = Real(*)(Real,Real,Real);
+        using QuaternaryFunctionPtr = Real(*)(Real,Real,Real,Real);
+        template<typename... R> requires (std::is_same<R...,Real>::value)
+        using NaryFunctionPtr = Real(*)(R...);
+        using VariadicFunctionPtr= Real(*)(const Real*,int);
+    }
+
     template<int n,typename ResultType>
     class ParametricParser {
     public:
@@ -45,7 +79,13 @@ namespace parser {
         void addFunction(const std::string &name,Function &&f);
         template<typename Function,typename UserData>
         void addFunction(const std::string &name, Function &&f,UserData *data);
-
+        void addConstant(const std::string &name,Real val);
+        template<typename Operator>
+        void addOperator(const std::string &name,Operator &&op);
+        template<typename Operator>
+        void addOperator(const std::string &name,Operator &&op,unsigned precedence);
+        template<typename Operator>
+        void addOperator(const std::string &name,Operator &&op,unsigned precedence, bool rightAssociative);
     protected:
         std::array<std::string,n> variableNames;
         std::array<Real,n> variables;
@@ -66,6 +106,50 @@ namespace parser {
         std::fill(indexes.begin(),indexes.end(),0);
         for(int i=0;i<n;i++)
             parser.DefineVar(variableNames[i].c_str(), &variables[i]);
+        addOperator("//", [](auto x,auto y)->parser::Real{return std::llround(x)/std::llround(y);},parser::Precedence::MULTIPLICATION,parser::Associativity::LEFT);
+        addOperator("%", [](auto x,auto y)->parser::Real{return std::llround(x)%std::llround(y);},parser::Precedence::MULTIPLICATION,parser::Associativity::LEFT);
+        addOperator("~=", [](auto x,auto y)->parser::Real{return std::abs(x-y)<1e-6;},parser::Precedence::COMPARISON,parser::Associativity::LEFT);
+        addOperator("|<|", [](auto x,auto y)->parser::Real{return std::abs(x)<std::abs(y);}, parser::Precedence::COMPARISON,parser::Associativity::LEFT);
+        addOperator("|>|", [](auto x,auto y)->parser::Real{return std::abs(x)>std::abs(y);}, parser::Precedence::COMPARISON,parser::Associativity::LEFT);
+        addOperator("|<=|", [](auto x,auto y)->parser::Real{return std::abs(x)<=std::abs(y);}, parser::Precedence::COMPARISON,parser::Associativity::LEFT);
+        addOperator("|>=|", [](auto x,auto y)->parser::Real{return std::abs(x)>=std::abs(y);}, parser::Precedence::COMPARISON,parser::Associativity::LEFT);
+        addOperator("**",static_cast<FunctionTypes::BinaryFunctionPtr>(std::pow),parser::Precedence::EXPONENTIATION,parser::Associativity::RIGHT);
+        addFunction("floor",static_cast<FunctionTypes::UnaryFunctionPtr>(std::floor));
+        addFunction("ceil",static_cast<FunctionTypes::UnaryFunctionPtr>(std::ceil));
+        addFunction("round",static_cast<FunctionTypes::UnaryFunctionPtr>(std::round));
+        addFunction("gamma",static_cast<FunctionTypes::UnaryFunctionPtr>(std::lgamma));
+        addFunction("erf",static_cast<FunctionTypes::UnaryFunctionPtr>(std::erf));
+        addFunction("beta",static_cast<FunctionTypes::BinaryFunctionPtr>(std::beta));
+        addFunction("zeta",static_cast<FunctionTypes::UnaryFunctionPtr>(std::riemann_zeta));
+        addFunction("expint",static_cast<FunctionTypes::UnaryFunctionPtr>(std::expint));
+
+        addFunction("N1",[](const Real* u,int m)->Real
+        {
+            std::span U(u,u+m);
+            return std::accumulate(U.begin(),U.end(),0.0,[](auto x,auto y){return x+std::abs(y);});
+        });
+        addFunction("N2",[](const Real* u,int m)->Real
+        {
+            std::span U(u,u+m);
+            return std::sqrt(std::inner_product(U.begin(),U.end(),U.begin(),0.));
+        });
+        addFunction("Ninf",[](const Real* u,int m)->Real
+        {
+            std::span U(u,u+m);
+            return std::accumulate(U.begin(),U.end(),0.0,[](auto x,auto y){return std::max(x,std::abs(y));});
+        });
+
+        addFunction("Norm",[](const Real* u,int m)->Real
+        {
+            std::span U(u,u+m-1);
+            if(std::isinf(u[m-1]))
+                return std::accumulate(U.begin(),U.end(),0.0,[](auto x,auto y){return std::max(x,std::abs(y));});
+            else if(u[m-1]==1)
+                return std::accumulate(U.begin(),U.end(),0.0,[](auto x,auto y){return x+std::abs(y);});
+            else if(u[m-1]==2)
+                return std::sqrt(std::inner_product(U.begin(),U.end(),U.begin(),0.));
+            else return std::pow(std::accumulate(U.begin(),U.end(),0.0,[s=u[m-1]](auto x,auto y){return x+std::pow(std::abs(y),s);}),1./u[m-1]);
+        });
     }
 
     template<int n,int m, typename ResultType>
@@ -143,6 +227,30 @@ namespace parser {
                 *v = std::get<0>(f)(variables);
             else
                 *v = std::get<1>(f)(indexes);
+    }
+
+    template<int n, typename ResultType>
+    void ParametricParser<n, ResultType>::addConstant(const std::string &name, Real val) {
+        parser.DefineConst(name, val);
+    }
+
+    template<int n,typename ResultType>
+    template<typename Operator>
+    void ParametricParser<n, ResultType>::addOperator(const std::string &name,Operator &&op)
+    {
+        parser.DefineOprt(name,std::forward<Operator>(op));
+    }
+
+    template<int n, typename ResultType>
+    template<typename Operator>
+    void ParametricParser<n, ResultType>::addOperator(const std::string &name, Operator &&op, unsigned int precedence) {
+        parser.DefineOprt(name,std::forward<Operator>(op),precedence);
+    }
+
+    template<int n, typename ResultType>
+    template<typename Operator>
+    void ParametricParser<n, ResultType>::addOperator(const std::string &name, Operator &&op, unsigned int precedence,bool rightAssociative) {
+        parser.DefineOprt(name,std::forward<Operator>(op),precedence,static_cast<mu::EOprtAssociativity>(rightAssociative));
     }
 
 

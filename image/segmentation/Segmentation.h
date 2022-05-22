@@ -5,11 +5,11 @@
 #ifndef IMAGEPROCESSING_SEGMENTATION_H
 #define IMAGEPROCESSING_SEGMENTATION_H
 
-#include "image/Transformation.h"
+#include "image/Operator.h"
 
 namespace image::segmentation {
 
-        class Segmentation :public Transformation<Image> {
+        class Segmentation :public Operator<Image> {
 
         };
 

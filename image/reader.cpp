@@ -63,25 +63,15 @@ image::Image image::PGMReader::readPGM(const std::string &filename,bool binary)
     int counter = 0;
     file.ignore();
     auto optComment = [&]() {
-        while(std::getline(file,tmp))
-        {
-            if(tmp[0]=='#')
-                continue;
-            else
-                break;
-        }
+        while(file.peek() == '#')
+            std::getline(file,tmp);
     };
     optComment();
     int width,height,maxValue;
-    {
-        std::stringstream str(tmp);
-        str >> height >> width;
-        optComment();
-    }
-    {
-        std::stringstream str(tmp);
-        str >> maxValue;
-    }
+    file >> height >> width;
+    optComment();
+    file >> maxValue;
+    file.ignore();
     std::cout << maxValue << std::endl;
     tensor<2> data=make_tensor(width,height);
     for(int i=0;i<width;i++,std::cout << std::endl) for(int j=0;j<height;j++)
@@ -106,25 +96,15 @@ image::Image image::PGMReader::readPPM(const std::string &filename,bool binary)
     std::string tmp;
     int counter = 0;
     auto optComment = [&]() {
-        while(std::getline(file,tmp))
-        {
-            if(tmp[0]=='#')
-                continue;
-            else
-                break;
-        }
+        while(file.peek() == '#')
+            std::getline(file,tmp);
     };
     optComment();
     int width,height,maxValue;
-    {
-        std::stringstream str(tmp);
-        str >> height >> width;
-        optComment();
-    }
-    {
-        std::stringstream str(tmp);
-        str >> maxValue;
-    }
+    file >> height >> width;
+    optComment();
+    file >> maxValue;
+    file.ignore();
     tensor<3> data=image::make_tensor(nb_channels,width,height);
      for(int j=0;j<width;j++) for(int k=0;k<height;k++) for(int i=0;i<nb_channels;i++)
     {
@@ -146,18 +126,12 @@ image::Image image::PGMReader::readPBM(const std::string &filename,bool binary) 
     file.ignore();
     std::string tmp;
     auto optComment = [&]() {
-        while(std::getline(file,tmp))
-        {
-            if(tmp[0]=='#')
-                continue;
-            else
-                break;
-        }
+        while(file.peek() == '#')
+            std::getline(file,tmp);
     };
     optComment();
-    std::stringstream str(tmp);
     int width,height;
-    str >> height >> width;
+    file >> height >> width;
     tensor<2> data=make_tensor(width,height);
     constexpr int bit_size=8;
     if (binary)
@@ -170,7 +144,7 @@ image::Image image::PGMReader::readPBM(const std::string &filename,bool binary) 
         {
             bits = std::bitset<bit_size>(readData[i/bit_size]);
             for(int j=0;j<bit_size;j++)
-                data[(i+j)/height][(i+j)%height]=bits[j];
+                data[(i+j)/height][(i+j)%height]=bits[j].flip();
         }
 
     }

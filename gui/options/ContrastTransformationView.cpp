@@ -99,12 +99,11 @@ namespace GUI::options {
         auto pen = series->pen();
         pen.setStyle(Qt::SolidLine);
         pen.setColor(Qt::GlobalColor::darkGreen);
-        //pen.setWidth(2);
+        pen.setWidth(2);
         series->setPen(pen);
 
         referenceSeries->setName(tr("Identity"));
         series->setName(tr("Contrast"));
-        series->setPointsVisible();
         chart->addSeries(referenceSeries);
         chart->addSeries(series);
         //chart->addSeries(scatterSeries);

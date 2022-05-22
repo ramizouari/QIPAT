@@ -39,7 +39,7 @@
 #include "gui/options/FilterDialog.h"
 #include "gui/options/ContrastDialog.h"
 #include "image/filter/global/IntensityMapper.h"
-#include "gui/options/MatrixInput.h"
+#include "gui/options/MatrixSheet.h"
 #include "image/segmentation/OtsuSegmentation.h"
 #include "image/filter/spectral/SpectralFilter.h"
 #include "image/noise/SpeckleNoise.h"
@@ -313,8 +313,12 @@ namespace GUI {
                 *imageLabel->getData() = std::move(filter.apply(*imageLabel->getData()));
             imageInformationBar->update(*imageLabel->getData());
             imageLabel->updateQImage();
-            QString msg=tr("Mean filter applied, Signal to Noise Ratio: ");
-            msg+=QString::number((double) image::stats::signalToNoiseRatio(oldImage, *imageLabel->getData()));
+            QString msg;
+            if(padding) {
+                msg = tr("Mean filter applied, Signal to Noise Ratio: ");
+                msg += QString::number((double) image::stats::signalToNoiseRatio(oldImage, *imageLabel->getData()));
+            }
+            else msg=tr("Mean filter applied");
             statusBar()->showMessage(msg);
         });
         dialog.exec();

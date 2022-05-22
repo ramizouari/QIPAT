@@ -56,18 +56,21 @@ namespace image::filter
     [[deprecated("Not properly defined")]]
     Image MeanBlurFilter::apply(const Image &src) const {
 
-        for(auto &channel : src.data)
+        int s1=size/2,s2=size/2;
+        Image dst(src.width-2*s1,src.height-2*s2,src.nb_channel);
+        for(int c=0;c<src.nb_channel;c++)
         {
-            tensor<2> prefixSum = make_tensor(src.width,src.height);
-            for(int i=0;i<src.width;i++) {
-                prefixSum[i][0] = channel[i][0];
-                for (int j = 0; j < src.height; j++)
-                    prefixSum[i][j] = prefixSum[i][j - 1] + channel[i][j];
+            tensor<2> prefixSum = make_tensor(src.width+1,src.height+1);
+            for(int i=s1+1;i+s1<=src.width;i++) {
+                for (int j = s2+1; j+s2 <= src.height; j++)
+                    prefixSum[i][j] = prefixSum[i][j - 1] + src(c,i-s1-1,j-s2-1);
             }
-            for(int i=1;i<src.width;i++) for(int j=0;j<src.height;j++)
+            for(int i=1;i<=src.width;i++) for(int j=0;j<=src.height;j++)
                     prefixSum[i][j] += prefixSum[i-1][j];
+            for(int i=s1+1;i+s1<=src.width;i++) for(int j=s2+1;j+s2<=src.height;j++)
+                    dst(c,i-1-s1,j-1-s2) = (prefixSum[i+s1][j+s2] - prefixSum[i+s1][j-s2-1] - prefixSum[i-s1-1][j+s2] + prefixSum[i-s1-1][j-s2-1])/(size*size);
         }
-        return src;
+        return dst;
     }
 
     Image MeanBlurFilter::apply(Padding &src) const

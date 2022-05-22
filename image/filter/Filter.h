@@ -7,18 +7,18 @@
 
 #include "image/Image.h"
 #include "image/Padding.h"
-#include "image/Transformation.h"
+#include "image/Operator.h"
 
 namespace image::filter {
 
 
-    class Filter :public Transformation<Image> {
+    class Filter : public Operator<Image>, public Transformation<Padding,Image> {
     public:
         ~Filter() override = default;
 
         void apply(const Image &src, Image &dst) const;
-        [[nodiscard]] virtual Image apply(const Image &src) const = 0;
-        [[nodiscard]] virtual Image apply(Padding &src) const = 0;
+        [[nodiscard]] Image apply(const Image &src) const override = 0;
+        [[nodiscard]] Image apply(Padding &src) const override = 0;
         [[nodiscard]] Image apply(Padding &&src) const;
         Image operator()(const Image &src) const;
         void operator()(const Image &src, Image &dst) const;

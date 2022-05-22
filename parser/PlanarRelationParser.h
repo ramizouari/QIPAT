@@ -15,7 +15,7 @@ namespace parser {
     public:
         explicit PlanarRelationParser(const std::string &expression, Real width, Real height);
         ~PlanarRelationParser() = default;
-        void setParameter(int index,Real val,int pos,bool updateDependedVariables=true) override;
+        void setParameter(int index,Real val,int pos,bool updateDependentVariables=true) override;
     private:
         Real width,height;
         std::array<Real,2> normalizedVariables;

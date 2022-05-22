@@ -11,7 +11,7 @@
 #include <QStatusBar>
 #include "GrayFilterInput.h"
 #include "PaddingInput.h"
-#include "MatrixInput.h"
+#include "MatrixSheet.h"
 
 namespace GUI::options {
 

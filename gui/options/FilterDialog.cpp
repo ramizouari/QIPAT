@@ -3,7 +3,10 @@
 //
 
 #include <QLabel>
+#include <QStackedWidget>
+#include <QSpinBox>
 #include "FilterDialog.h"
+#include "MatrixExpression.h"
 
 namespace GUI::options {
     FilterDialog::FilterDialog(QWidget *parent) : QDialog(parent) {
@@ -48,27 +51,31 @@ namespace GUI::options {
     }
 
     MatrixInput *FilterDialog::createMatrixInput() {
-        auto matrixInput = new options::MatrixInput(this);
-        auto matrixLabel = new QLabel("Convolution Matrix:",this);
-        layout->addRow(matrixLabel,matrixInput);
-        connect(matrixInput, &MatrixInput::validityUpdated, this, [this](MatrixInput::ValidityType type)
+        auto matrixInputChoice = new MatrixInputChoice(this);
+        auto matrixExpression=new MatrixExpression;
+        auto matrixSheet = new MatrixSheet;
+        matrixInputChoice->addMatrixInput(matrixSheet);
+        matrixInputChoice->addMatrixInput(matrixExpression);
+
+        connect(matrixSheet, &MatrixSheet::validityUpdated, this, [this](MatrixSheet::ValidityType type)
         {
             switch(type)
             {
-                case MatrixInput::ValidityType::VALID:
+                case MatrixSheet::ValidityType::VALID:
                     dialogButtonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
                     statusBar->showMessage("Valid matrix");
                     break;
-                case MatrixInput::ValidityType::INVALID:
+                case MatrixSheet::ValidityType::INVALID:
                     dialogButtonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
                     statusBar->showMessage("Invalid matrix");
                     break;
-                case MatrixInput::ValidityType::MISSING:
+                case MatrixSheet::ValidityType::MISSING:
                     dialogButtonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
                     statusBar->showMessage("Missing values");
                     break;
             }
         });
-        return matrixInput;
+        layout->addWidget(matrixInputChoice);
+        return matrixInputChoice;
     }
 } // options

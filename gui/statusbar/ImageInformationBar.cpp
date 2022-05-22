@@ -42,7 +42,7 @@ namespace GUI {
             setText(string);
         }
         else {
-            stream << tr("RGB image. ");
+            stream << tr("RGB24 image. ");
             auto [min1,max1,mean1,median1,std1]=::image::stats::calculateStatistics(image)[0];
             auto [min2,max2,mean2,median2,std2]=::image::stats::calculateStatistics(image)[1];
             auto [min3,max3,mean3,median3,std3]=::image::stats::calculateStatistics(image)[2];

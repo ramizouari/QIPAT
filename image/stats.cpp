@@ -27,7 +27,7 @@ namespace image::stats
                     stats.back().std+=std::pow(v-stats.back().mean,2);
             stats.back().std/=values.size();
             stats.back().std=std::sqrt(stats.back().std);
-            std::sort(values.begin(),values.end());
+            std::nth_element(values.begin(),values.begin()+values.size()/2,values.end());  // median
             stats.back().median=values[values.size()/2];
         }
         return stats;

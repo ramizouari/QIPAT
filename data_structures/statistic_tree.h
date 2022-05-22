@@ -18,8 +18,8 @@ namespace data_structures {
 * <li> left and right subtree
  * </ol>
 * @Requirements
-* <ol><li> a class T
-* <li> (T,<=) is a totally ordered set
+* <ol><li> a class A
+* <li> (A,<=) is a totally ordered set
 * <li> S is a statistic type
 * </ol>
 * @tparam T the type of the key
@@ -29,7 +29,7 @@ namespace data_structures {
 * @Requirements
 * <ol>
 * <li> class S
-* <li> S has a public static method called update which accepts Tree<T,V,S>.
+* <li> S has a public static method called update which accepts Tree<A,V,S>.
 * <li> the update method "updates" adequately the statistics, and only the statistics
  * </ol>
 */
@@ -739,13 +739,13 @@ namespace data_structures {
 * The sum is defined over an associative binary operation having a neutral element
 * It supports range sum (L,R) for keys belonging to the interval [L,R[ 
 * @Requirements
-* 1. a class T
-* 2. an associative binary operation O: TxT->T 
+* 1. a class A
+* 2. an associative binary operation O: TxT->A
 * 3. O has a neutral element named 'neutral'. and it is defined as a public static attribute.
-* 4. O has an overload for the ternary case: TxTxT->T, and its definition is compatible with the binary case.
+* 4. O has an overload for the ternary case: TxTxT->A, and its definition is compatible with the binary case.
 * @Notes
-* Formally, (T,O) is a monoid
-* The order of T does not need to be compatible with O
+* Formally, (A,O) is a monoid
+* The order of A does not need to be compatible with O
 */
 
     template<typename T, typename O>
