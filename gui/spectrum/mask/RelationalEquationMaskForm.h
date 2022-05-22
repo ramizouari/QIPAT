@@ -7,7 +7,8 @@
 
 #include <QLineEdit>
 #include "MaskForm.h"
-#include "parser/PlanarRelationParser.h"
+#include "parser/PlanarParser.h"
+#include "image/Image.h"
 #include <QTextEdit>
 #include <QPlainTextEdit>
 

@@ -39,8 +39,8 @@ namespace parser {
         COMPARISON,
         ADDITION,
         MULTIPLICATION,
-        UNARY=MULTIPLICATION,
-        EXPONENTIATION
+        EXPONENTIATION,
+        UNARY=MULTIPLICATION
     };
 
     enum Associativity

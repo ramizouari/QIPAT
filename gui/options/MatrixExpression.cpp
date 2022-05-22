@@ -7,9 +7,8 @@
 #include <QLabel>
 #include <QSpinBox>
 #include "MatrixExpression.h"
-#include "parser/PlanarRelationParser.h"
 #include "functional/zip.h"
-#include "parser/PlanarFunctionParser.h"
+#include "parser/PlanarParser.h"
 
 namespace GUI::options {
         MatrixExpression::MatrixExpression(QWidget *parent) :MatrixInput(parent){
@@ -34,7 +33,7 @@ namespace GUI::options {
     image::Matrix MatrixExpression::getConvolutionMatrix() {
         auto width=rowSpinBox->value(),height=columnSpinBox->value();
         image::Matrix M(0,linalg::m_shape{width,height});
-        parser::PlanarFunctionParser parser(generatorExpression->toPlainText().toStdString(),width,height);
+        parser::PlanarFunctionParser parser(generatorExpression->toPlainText().toStdString(),width,height,true);
         std::vector<parser::Real> maxs({static_cast<parser::Real>(width-1),static_cast<parser::Real>(height-1)});
         auto N=parser.parseInterval({0,0},maxs,{width,height});
         parser::Real k=0;

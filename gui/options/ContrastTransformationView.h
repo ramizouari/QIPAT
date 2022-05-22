@@ -54,6 +54,8 @@ namespace GUI::options {
         void updatePointsLeft(int id);
     };
 
+
+
     } // options
 
 #endif //IMAGEPROCESSING_CONTRASTTRANSFORMATIONVIEW_H

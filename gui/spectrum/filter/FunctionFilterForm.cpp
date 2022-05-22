@@ -4,7 +4,7 @@
 
 #include <QLabel>
 #include "FunctionFilterForm.h"
-#include "parser/PlanarRelationParser.h"
+#include "parser/PlanarParser.h"
 #include "functional/zip.h"
 #include "parser/ImageFunctionParser.h"
 
