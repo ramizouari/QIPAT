@@ -21,6 +21,11 @@ namespace image::filter {
         [[nodiscard]] Real getComponent(int x, int y) const override;
 
     };
+
+    /*
+     * Optimized
+     * O(width*height)
+     * */
     class MeanBlurFilter : public AbstractMeanBlurFilter {
     public:
         using AbstractMeanBlurFilter::AbstractMeanBlurFilter;
@@ -28,7 +33,10 @@ namespace image::filter {
         [[nodiscard]] Image apply(Padding &src) const override;
     };
 
-
+    /*
+     * Naive
+     * O(width*height*size)
+     * */
     class SmallMeanBlurFilter : public AbstractMeanBlurFilter {
     public:
         using AbstractMeanBlurFilter::AbstractMeanBlurFilter;

@@ -1,7 +1,7 @@
 //
 // Created by ramizouari on 30/04/22.
 //
-#include "reader.h"
+#include "ImageReader.h"
 #include "Image.h"
 #include "functional/functional.h"
 #include <regex>

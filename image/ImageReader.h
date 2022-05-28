@@ -2,8 +2,8 @@
 // Created by ramizouari on 30/04/22.
 //
 
-#ifndef IMAGEPROCESSING_READER_H
-#define IMAGEPROCESSING_READER_H
+#ifndef IMAGEPROCESSING_IMAGEREADER_H
+#define IMAGEPROCESSING_IMAGEREADER_H
 
 #include <string>
 #include "Image.h"
@@ -33,4 +33,4 @@ namespace image
 
 }
 
-#endif //IMAGEPROCESSING_READER_H
+#endif //IMAGEPROCESSING_IMAGEREADER_H

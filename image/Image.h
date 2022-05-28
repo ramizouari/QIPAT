@@ -141,4 +141,4 @@ namespace image
     };
 }
 
-#endif //IMAGEPROCESSING_READER_H
+#endif //IMAGEPROCESSING_IMAGEREADER_H

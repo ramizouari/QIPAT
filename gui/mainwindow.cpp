@@ -22,7 +22,7 @@
 #include "image/utils.h"
 #include "mainwindow.h"
 #include "gui/histogram/Histogram.h"
-#include "image/reader.h"
+#include "image/ImageReader.h"
 #include "image/stats.h"
 #include "gui/histogram/HistogramCurveView.h"
 #include "image/noise/ImpulsiveNoise.h"
@@ -145,7 +145,7 @@ namespace GUI {
         if (fileName.isEmpty()) {
             return;
         }
-        image::PGMReader reader;
+        image::PNMReader reader;
         imageLabel->openImage(new image::Image(reader.read(fileName.toStdString())));
         std::stringstream stream;
         stream << "Image: " << fileName.toStdString() << " (" << imageLabel->getData()->width << "x" << imageLabel->getData()->height << ")";
