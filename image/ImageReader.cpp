@@ -18,14 +18,14 @@ image::ImageReader::~ImageReader() {
 
 }
 
-image::PGMReader::PGMReader() {
+image::PNMReader::PNMReader() {
 
 }
 
-image::PGMReader::~PGMReader() = default;
+image::PNMReader::~PNMReader() = default;
 
 
-image::Image image::PGMReader::read(const std::string &filename) {
+image::Image image::PNMReader::read(const std::string &filename) {
     std::ifstream file(filename);
     if (!file.is_open()) {
         throw std::runtime_error("Can't open fileMenu");
@@ -54,7 +54,7 @@ image::Image image::PGMReader::read(const std::string &filename) {
 }
 
 
-image::Image image::PGMReader::readPGM(const std::string &filename,bool binary)
+image::Image image::PNMReader::readPGM(const std::string &filename, bool binary)
 {
     std::ifstream file(filename,binary?std::ios::binary:std::ios::in);
     std::string magicNumber;
@@ -86,7 +86,7 @@ image::Image image::PGMReader::readPGM(const std::string &filename,bool binary)
     return image::Image(std::move(data),maxValue);
 }
 
-image::Image image::PGMReader::readPPM(const std::string &filename,bool binary)
+image::Image image::PNMReader::readPPM(const std::string &filename, bool binary)
 {
     constexpr int nb_channels=3;
     std::ifstream file(filename,binary?std::ios::binary:std::ios::in);
@@ -119,7 +119,7 @@ image::Image image::PGMReader::readPPM(const std::string &filename,bool binary)
     return image::Image(std::move(data),maxValue);
 }
 
-image::Image image::PGMReader::readPBM(const std::string &filename,bool binary) {
+image::Image image::PNMReader::readPBM(const std::string &filename, bool binary) {
     std::ifstream file(filename,binary?std::ios::binary:std::ios::in);
     std::string magicNumber;
     file >> magicNumber;

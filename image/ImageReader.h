@@ -19,14 +19,14 @@ namespace image
         virtual Image read(const std::string &filename)=0;
     };
 
-    class PGMReader : public ImageReader
+    class PNMReader : public ImageReader
     {
         Image readPBM(const std::string &filename,bool binary);
         Image readPGM(const std::string &filename,bool binary);
         Image readPPM(const std::string &filename,bool binary);
     public:
-        PGMReader();
-        ~PGMReader() override;
+        PNMReader();
+        ~PNMReader() override;
         Image read(const std::string &filename) override;
     };
 
