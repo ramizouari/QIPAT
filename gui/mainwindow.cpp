@@ -133,31 +133,59 @@ namespace GUI {
     void MainWindow::openImage() {
         QFileDialog dialog(this);
         dialog.setFileMode(QFileDialog::ExistingFile);
-        dialog.filterSelected("Image (*.bpm)");
+        dialog.setNameFilter(tr("Images (*.pbm *.pgm *.ppm)"));
         dialog.setModal(true);
         dialog.setFocus();
         dialog.open();
-        dialog.exec();
 
-        if(dialog.selectedFiles().empty())
+        if (dialog.exec() != QDialog::Accepted)
             return;
+
         auto fileName = dialog.selectedFiles().first();
         if (fileName.isEmpty()) {
             return;
         }
+        imageLabel->setFilePath(fileName);
         image::PNMReader reader;
         imageLabel->openImage(new image::Image(reader.read(fileName.toStdString())));
-        std::stringstream stream;
-        stream << "Image: " << fileName.toStdString() << " (" << imageLabel->getData()->width << "x" << imageLabel->getData()->height << ")";
-        statusBar()->showMessage(QString::fromStdString(stream.str()));
+//        std::stringstream stream;
+//        stream << "Image: " << fileName.toStdString() << " (" << imageLabel->getData()->width << "x" << imageLabel->getData()->height << ")";
+//        statusBar()->showMessage(QString::fromStdString(stream.str()));
+        statusBar()->showMessage(QString("Image: %1(%2 × %3)").arg(fileName).arg(imageLabel->getData()->width).arg(imageLabel->getData()->height));
         imageInformationBar->update(*imageLabel->getData());
     }
 
     void MainWindow::saveImage() {
-
+        saveToFile(imageLabel->getFilePath());
+        statusBar()->showMessage(QString("Image saved to : %1").arg(imageLabel->getFilePath()));
     }
 
     void MainWindow::saveImageAs() {
+        QFileDialog dialog(this);
+        dialog.setWindowModality(Qt::WindowModal);
+        dialog.setAcceptMode(QFileDialog::AcceptSave);
+
+        QString format ;
+        switch(imageLabel->getFileFormat()) {
+            case ImageFormat::PBM:
+                format = "pbm";
+                break;
+            case ImageFormat::PGM:
+                format = "pgm";
+                break;
+            case ImageFormat::PPM:
+                format = "ppm";
+                break;
+        }
+        dialog.setNameFilter(format.toUpper()+" (*."+format+")");
+        dialog.selectFile(tr("untitled")+"."+format);
+        if (dialog.exec() != QDialog::Accepted)
+            return;
+        QString path = dialog.selectedFiles().first();
+        saveToFile(path);
+    }
+
+    void MainWindow::saveToFile(QString path) {
 
     }
 

@@ -15,6 +15,12 @@ namespace GUI {
     //namespace Ui { class ImageView; }
     //QT_END_NAMESPACE
 
+    enum ImageFormat {
+        PBM = 0,
+        PGM = 1,
+        PPM = 2
+    };
+
     class ImageView : public QScrollArea {
     Q_OBJECT
 
@@ -27,6 +33,9 @@ namespace GUI {
         image::Image* getData();
         void updateQImage();
         void openImage(image::Image *pImage);
+        void setFilePath(QString filepath);
+        QString getFilePath();
+        unsigned int getFileFormat();
     public slots:
         void zoomIn();
         void zoomOut();
@@ -37,6 +46,8 @@ namespace GUI {
         QImage qImage;
         image::Real factor=1;
         QLabel *imageLabel;
+        QString filepath;
+        unsigned int fileFormat;
     };
 } // GUI
 

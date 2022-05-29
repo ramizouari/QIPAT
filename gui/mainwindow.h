@@ -25,6 +25,7 @@ namespace GUI {
         explicit MainWindow(QWidget *parent = nullptr);
 
         ~MainWindow() override;
+        void saveToFile(QString path);
 
     private:
        // Ui::MainWindow *ui;

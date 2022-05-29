@@ -129,4 +129,26 @@ namespace GUI {
         factor=1;
         setImage(pImage);
     }
+
+    void ImageView::setFilePath(QString filepath) {
+        filepath = filepath;
+    }
+
+    QString ImageView::getFilePath() {
+        return filepath;
+    }
+
+    /**
+     * This is a convenience method that returns a number representing the file format
+     *
+     */
+    unsigned int ImageView::getFileFormat() {
+        if (imageData->nb_channel == 1) {
+            if (imageData->max == 1 ) {
+                return ImageFormat::PBM;
+            }
+            return ImageFormat::PGM;
+        }
+        return ImageFormat::PPM ;
+    }
 } // GUI

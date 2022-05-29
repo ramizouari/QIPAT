@@ -18,4 +18,12 @@ namespace image {
 
     PNMWriter::~PNMWriter() = default;
 
+    void PNMWriter::write(Image image, const std::string &filename) {}
+
+    void PNMWriter::writePBM(const std::string &filename, bool binary) {}
+
+    void PNMWriter::writePGM(const std::string &filename, bool binary) {}
+
+    void PNMWriter::writePPM(const std::string &filename, bool binary) {}
+
 } // image
