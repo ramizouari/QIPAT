@@ -10,7 +10,7 @@
 
 namespace image
 {
-    class Image;
+//    class Image;
     class ImageReader
     {
     public:

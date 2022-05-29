@@ -133,32 +133,83 @@ namespace GUI {
     void MainWindow::openImage() {
         QFileDialog dialog(this);
         dialog.setFileMode(QFileDialog::ExistingFile);
-        dialog.filterSelected("Image (*.bpm)");
+        dialog.setNameFilter(tr("Images (*.pbm *.pgm *.ppm)"));
         dialog.setModal(true);
         dialog.setFocus();
         dialog.open();
-        dialog.exec();
 
-        if(dialog.selectedFiles().empty())
+        if (dialog.exec() != QDialog::Accepted)
             return;
+
         auto fileName = dialog.selectedFiles().first();
         if (fileName.isEmpty()) {
             return;
         }
+        updateSelectedFile(fileName);
         image::PNMReader reader;
         imageLabel->openImage(new image::Image(reader.read(fileName.toStdString())));
-        std::stringstream stream;
-        stream << "Image: " << fileName.toStdString() << " (" << imageLabel->getData()->width << "x" << imageLabel->getData()->height << ")";
-        statusBar()->showMessage(QString::fromStdString(stream.str()));
+//        std::stringstream stream;
+//        stream << "Image: " << fileName.toStdString() << " (" << imageLabel->getData()->width << "x" << imageLabel->getData()->height << ")";
+//        statusBar()->showMessage(QString::fromStdString(stream.str()));
+        statusBar()->showMessage(QString("Image: %1(%2 × %3)").arg(fileName).arg(imageLabel->getData()->width).arg(imageLabel->getData()->height));
         imageInformationBar->update(*imageLabel->getData());
     }
 
     void MainWindow::saveImage() {
-
+        if (imageLabel->getOverrideWarning()) {
+            QMessageBox messageBox(this);
+            messageBox.setText("Overwrite current Image?");
+            messageBox.setInformativeText("This action is irreversible!");
+            messageBox.setStandardButtons(QMessageBox::Save | QMessageBox::Cancel);
+            messageBox.setDefaultButton(QMessageBox::Cancel);
+            messageBox.setWindowTitle("Overwrite changes");
+            QCheckBox checkBox("Don't show this again", &messageBox);
+            messageBox.setCheckBox(&checkBox);
+            int response = messageBox.exec();
+            if (response == QMessageBox::Save) {
+                if (messageBox.checkBox()->isChecked()) {
+                    imageLabel->disableOverrideWarning();
+                }
+                saveToFile(imageLabel->getFilePath());
+                statusBar()->showMessage(QString("Image saved to : %1").arg(imageLabel->getFilePath()));
+            }
+        }
+        else {
+            saveToFile(imageLabel->getFilePath());
+            statusBar()->showMessage(QString("Image saved to : %1").arg(imageLabel->getFilePath()));
+        }
     }
 
     void MainWindow::saveImageAs() {
+        QFileDialog dialog(this);
+        dialog.setWindowModality(Qt::WindowModal);
+        dialog.setAcceptMode(QFileDialog::AcceptSave);
 
+        QString format ;
+        switch(imageLabel->getFileFormat()) {
+            case image::ImageFormat::PBM:
+                format = "pbm";
+                break;
+            case image::ImageFormat::PGM:
+                format = "pgm";
+                break;
+            case image::ImageFormat::PPM:
+                format = "ppm";
+                break;
+        }
+        dialog.setNameFilter(format.toUpper()+" (*."+format+")");
+        dialog.selectFile(tr("untitled")+"."+format);
+        if (dialog.exec() != QDialog::Accepted)
+            return;
+        QString path = dialog.selectedFiles().first();
+        saveToFile(path);
+        updateSelectedFile(path);
+    }
+
+    void MainWindow::saveToFile(QString path) {
+        image::PNMWriter writer;
+        writer.write(*imageLabel->getData(), path.toStdString(), imageLabel->getFileFormat());
+//        imageLabel->openImage(new image::Image(reader.read(fileName.toStdString())));
     }
 
     void MainWindow::showHistogramCurve() {
@@ -573,5 +624,10 @@ Created by:
             imageLabel->updateQImage();
         });
         dialog.exec();
+    }
+
+    void MainWindow::updateSelectedFile(QString path) {
+        imageLabel->setFilePath(path);
+        this->setWindowTitle(QString("ImageProcessing - %1").arg(path.split("/").last()));
     }
 } // GUI
