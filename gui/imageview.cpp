@@ -145,10 +145,19 @@ namespace GUI {
     unsigned int ImageView::getFileFormat() {
         if (imageData->nb_channel == 1) {
             if (imageData->max == 1 ) {
-                return ImageFormat::PBM;
+                return image::ImageFormat::PBM;
             }
-            return ImageFormat::PGM;
+            return image::ImageFormat::PGM;
         }
-        return ImageFormat::PPM ;
+        return image::ImageFormat::PPM ;
     }
+
+    void ImageView::disableOverrideWarning() {
+        overrideWarning = false;
+    }
+
+    bool ImageView::getOverrideWarning() {
+        return overrideWarning;
+    }
+
 } // GUI

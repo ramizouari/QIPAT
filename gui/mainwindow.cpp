@@ -145,7 +145,7 @@ namespace GUI {
         if (fileName.isEmpty()) {
             return;
         }
-        imageLabel->setFilePath(fileName);
+        updateSelectedFile(fileName);
         image::PNMReader reader;
         imageLabel->openImage(new image::Image(reader.read(fileName.toStdString())));
 //        std::stringstream stream;
@@ -156,8 +156,28 @@ namespace GUI {
     }
 
     void MainWindow::saveImage() {
-        saveToFile(imageLabel->getFilePath());
-        statusBar()->showMessage(QString("Image saved to : %1").arg(imageLabel->getFilePath()));
+        if (imageLabel->getOverrideWarning()) {
+            QMessageBox messageBox(this);
+            messageBox.setText("Overwrite current Image?");
+            messageBox.setInformativeText("This action is irreversible!");
+            messageBox.setStandardButtons(QMessageBox::Save | QMessageBox::Cancel);
+            messageBox.setDefaultButton(QMessageBox::Cancel);
+            messageBox.setWindowTitle("Overwrite changes");
+            QCheckBox checkBox("Don't show this again", &messageBox);
+            messageBox.setCheckBox(&checkBox);
+            int response = messageBox.exec();
+            if (response == QMessageBox::Save) {
+                if (messageBox.checkBox()->isChecked()) {
+                    imageLabel->disableOverrideWarning();
+                }
+                saveToFile(imageLabel->getFilePath());
+                statusBar()->showMessage(QString("Image saved to : %1").arg(imageLabel->getFilePath()));
+            }
+        }
+        else {
+            saveToFile(imageLabel->getFilePath());
+            statusBar()->showMessage(QString("Image saved to : %1").arg(imageLabel->getFilePath()));
+        }
     }
 
     void MainWindow::saveImageAs() {
@@ -167,13 +187,13 @@ namespace GUI {
 
         QString format ;
         switch(imageLabel->getFileFormat()) {
-            case ImageFormat::PBM:
+            case image::ImageFormat::PBM:
                 format = "pbm";
                 break;
-            case ImageFormat::PGM:
+            case image::ImageFormat::PGM:
                 format = "pgm";
                 break;
-            case ImageFormat::PPM:
+            case image::ImageFormat::PPM:
                 format = "ppm";
                 break;
         }
@@ -183,10 +203,13 @@ namespace GUI {
             return;
         QString path = dialog.selectedFiles().first();
         saveToFile(path);
+        updateSelectedFile(path);
     }
 
     void MainWindow::saveToFile(QString path) {
-
+        image::PNMWriter writer;
+        writer.write(*imageLabel->getData(), path.toStdString(), imageLabel->getFileFormat());
+//        imageLabel->openImage(new image::Image(reader.read(fileName.toStdString())));
     }
 
     void MainWindow::showHistogramCurve() {
@@ -601,5 +624,10 @@ Created by:
             imageLabel->updateQImage();
         });
         dialog.exec();
+    }
+
+    void MainWindow::updateSelectedFile(QString path) {
+        imageLabel->setFilePath(path);
+        this->setWindowTitle(QString("ImageProcessing - %1").arg(path.split("/").last()));
     }
 } // GUI

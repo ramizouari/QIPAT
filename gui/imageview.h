@@ -9,17 +9,14 @@
 #include <QLabel>
 #include <QScrollArea>
 #include "image/Image.h"
+#include "image/ImageFormat.h"
 
 namespace GUI {
     //QT_BEGIN_NAMESPACE
     //namespace Ui { class ImageView; }
     //QT_END_NAMESPACE
 
-    enum ImageFormat {
-        PBM = 0,
-        PGM = 1,
-        PPM = 2
-    };
+
 
     class ImageView : public QScrollArea {
     Q_OBJECT
@@ -36,6 +33,9 @@ namespace GUI {
         void setFilePath(QString filepath);
         QString getFilePath();
         unsigned int getFileFormat();
+        void disableOverrideWarning();
+        bool getOverrideWarning();
+
     public slots:
         void zoomIn();
         void zoomOut();
@@ -48,6 +48,8 @@ namespace GUI {
         QLabel *imageLabel;
         QString filepath;
         unsigned int fileFormat;
+        bool overrideWarning = true;
+
     };
 } // GUI
 

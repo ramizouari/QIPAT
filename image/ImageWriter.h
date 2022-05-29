@@ -8,28 +8,37 @@
 
 #include <string>
 #include "Image.h"
-
+#include "ImageFormat.h"
+#include <fstream>
+#include <iostream>
+#include <memory>
+#include <bitset>
 
 namespace image {
 
-    class image;
     class ImageWriter
     {
     public:
         ImageWriter();
         virtual ~ImageWriter()=0;
-        virtual void write(Image image, const std::string &filename)=0;
+        virtual void write(const Image& image, const std::string &filepath, unsigned int imageFormat)=0;
     };
 
     class PNMWriter : public ImageWriter
     {
-        void writePBM(const std::string &filename, bool binary);
-        void writePGM(const std::string &filename, bool binary);
-        void writePPM(const std::string &filename, bool binary);
+        /**
+         * Write PBM image to binary
+         * @param image
+         * @param filepath
+         */
+        void writePBM(const Image& image, const std::string &filepath);
+        std::ofstream setHeaders(const std::string &filepath, std::string magicNumber, int width, int height, int max = 0);
+        void writeMultiple(const Image& image, const std::string& filepath, std::string magicNumber);
+
     public:
         PNMWriter();
         ~PNMWriter() override;
-        void write(Image image, const std::string &filename) override;
+        void write(const Image& image, const std::string &filepath, unsigned int imageFormat) override;
     };
 
 } // image

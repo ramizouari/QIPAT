@@ -10,8 +10,9 @@
 #include <QLabel>
 #include <QScrollArea>
 #include "image/Image.h"
-#include "imageview.h"
 #include "gui/statusbar/ImageInformationBar.h"
+#include "imageview.h"
+#include "image/ImageWriter.h"
 
 namespace GUI {
     QT_BEGIN_NAMESPACE
@@ -26,6 +27,7 @@ namespace GUI {
 
         ~MainWindow() override;
         void saveToFile(QString path);
+        void updateSelectedFile(QString path);
 
     private:
        // Ui::MainWindow *ui;
