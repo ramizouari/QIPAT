@@ -21,7 +21,6 @@ set(UTILITY_SOURCES
         utility.h utility.cpp)
 
 set(CORE_SOURCES
-        main.cpp
         image/Image.h image/Image.cpp
         image/ImageReader.h image/ImageReader.cpp
         image/stats.h image/stats.cpp
@@ -66,6 +65,7 @@ set(CORE_SOURCES
         image/ImageFormat.h
         )
 set(GUI_SOURCES
+        main.cpp
         gui/mainwindow.cpp gui/mainwindow.h gui/mainwindow.ui
         gui/histogram/Histogram.cpp gui/histogram/Histogram.h gui/histogram/histogram.ui
         gui/imageview.cpp gui/imageview.h gui/imageview.ui
