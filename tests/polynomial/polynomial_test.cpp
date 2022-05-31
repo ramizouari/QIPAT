@@ -21,31 +21,6 @@ using long_types=boost::mpl::list<long,long long,IF> ;
 
 
 #include "../print.h"
-template<integer n>
-std::ostream & operator<<(std::ostream & os,const cyclic<n>& v)
-{
-    return os << (integer&)v;
-}
-
-template<typename T>
-std::ostream& operator<<(std::ostream& os, const polynomial<T>& a)
-{
-    os << "[";
-    for(auto& x:a)
-        os << x << ",";
-    os << "]";
-    return os;
-}
-
-template<typename T>
-std::ostream& operator<<(std::ostream& os, const std::vector<T>& a)
-{
-    os << "[";
-    for(auto& x:a)
-        os << x << ",";
-    os << "]";
-    return os;
-}
 
 namespace boost::test_tools {
     template<algebra::integer n>

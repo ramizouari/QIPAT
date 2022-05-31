@@ -210,11 +210,11 @@ namespace fft {
         y.resize(r);
         fast_fourier_base_2<> FFT(r);
         inverse_fast_fourier_base_2 IFFT(r);
-        auto u = FFT(x), v = FFT(y);
+        auto u = FFT.unnormalized(x), v = FFT.unnormalized(y);
         std::vector<IC> w(r);
         for (int i = 0; i < r; i++)
             w[i] = u[i] * v[i];
-        auto z = IFFT(w);
+        auto z = IFFT.unnormalized(w);
         for (auto &s: z)
             s /= r;
         z.resize(n + m - 1);
@@ -222,9 +222,14 @@ namespace fft {
     }
 
     inline polynomial <IC> fast_multiplication(const polynomial <IC> &x, const polynomial <IC> &y,
-                                        factoriser &F = fast_fourier<>::get_factoriser()) {
+                                        factoriser &F) {
         return fast_multiplication(static_cast<const std::vector<IC> &>(x),
                                    static_cast<const std::vector<IC> &>(y), F);
+    }
+
+    inline polynomial <IC> fast_multiplication(const polynomial <IC> &x, const polynomial <IC> &y) {
+        return fast_multiplication(static_cast<const std::vector<IC> &>(x),
+                                   static_cast<const std::vector<IC> &>(y));
     }
 
 
@@ -574,11 +579,11 @@ namespace fft {
 
         fast_ntt NTT(r, d_cyclic::m);
         inverse_fast_ntt INTT = NTT.inv();
-        auto u = NTT(x), v = NTT(y);
+        auto u = NTT.unnormalized(x), v = NTT.unnormalized(y);
         std::vector<d_cyclic> w(r);
         for (int i = 0; i < r; i++)
             w[i] = u[i] * v[i];
-        auto z = INTT(w);
+        auto z = INTT.unnormalized(w);
         auto h = d_cyclic(r).inv();
         for (auto &s: z)
             s *= h;

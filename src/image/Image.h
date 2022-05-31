@@ -62,7 +62,9 @@ namespace image
     template<int n>
     tensor<n> make_tensor(std::span<unsigned int,n> dims)
     {
-        if constexpr (n==1)
+        if constexpr (n==0)
+            return Real{};
+        else if constexpr (n==1)
             return std::vector<Real>(dims.front());
         else {
             std::span<unsigned int, n - 1> subdim(dims.begin() + 1, n - 1);

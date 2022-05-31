@@ -38,5 +38,25 @@ inline std::ostream & operator<<(std::ostream & os,const linalg::s_matrix<T,n,m>
 }
 
 
+template<typename T>
+inline std::ostream& operator<<(std::ostream& os, const polynomial<T>& a)
+{
+    os << "[";
+    for(auto& x:a)
+        os << x << ",";
+    os << "]";
+    return os;
+}
+
+template<typename T>
+inline std::ostream& operator<<(std::ostream& os, const std::vector<T>& a)
+{
+    os << "[";
+    for(auto& x:a)
+        os << x << ",";
+    os << "]";
+    return os;
+}
+
 
 #endif //CPLIBRARY_PRINT_H
