@@ -85,7 +85,7 @@ namespace data_structures {
         if (!node)
             return nullptr;
         if (node->v == v)
-            return node->data;
+            return node;
         else if (node->v < v)
             return find(node->right, v);
         else return find(node->left, v);

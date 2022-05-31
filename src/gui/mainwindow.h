@@ -63,6 +63,8 @@ namespace GUI {
        void addSpectralFilter();
        void addErosion();
        void addDilation();
+       void addOpening();
+       void addClosing();
     };
 } // GUI
 

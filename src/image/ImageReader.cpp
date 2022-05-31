@@ -69,6 +69,7 @@ image::Image image::PNMReader::readPGM(const std::string &filename, bool binary)
     optComment();
     int width,height,maxValue;
     file >> height >> width;
+    file.ignore();
     optComment();
     file >> maxValue;
     file.ignore();
@@ -102,6 +103,7 @@ image::Image image::PNMReader::readPPM(const std::string &filename, bool binary)
     optComment();
     int width,height,maxValue;
     file >> height >> width;
+    file.ignore();
     optComment();
     file >> maxValue;
     file.ignore();
@@ -132,19 +134,20 @@ image::Image image::PNMReader::readPBM(const std::string &filename, bool binary)
     optComment();
     int width,height;
     file >> height >> width;
+    file.ignore();
     tensor<2> data=make_tensor(width,height);
-    constexpr int bit_size=8;
+    constexpr int byte_size=8;
     if (binary)
     {
-        int size=(width*height)/bit_size;
+        int size= (width*height) / byte_size;
         auto readData=std::make_unique<unsigned char[]>(size);
         file.read(reinterpret_cast<char *>(readData.get()), size);
-        std::bitset<bit_size> bits;
-        for (int i = 0; i < width*height; i+=bit_size)
+        std::bitset<byte_size> bits;
+        for (int i = 0; i < width*height; i+=byte_size)
         {
-            bits = std::bitset<bit_size>(readData[i/bit_size]);
-            for(int j=0;j<bit_size;j++)
-                data[(i+j)/height][(i+j)%height]=bits[j].flip();
+            bits = std::bitset<byte_size>(readData[i / byte_size]).flip();
+            for(int j=0; j < byte_size && (i+j)/height < width; j++)
+                data[(i+j)/height][(i+j)%height]=bits[j];
         }
 
     }

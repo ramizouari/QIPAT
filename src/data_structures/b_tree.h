@@ -1,7 +1,7 @@
 ﻿#ifndef __B_TREE_H__
 #define __B_TREE_H__
 #include "statistic_tree.h"
-#include "../algebra/order.h"
+#include "src/algebra/order.h"
 #include <optional>
 
 /*

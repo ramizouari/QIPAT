@@ -29,6 +29,11 @@ namespace GUI::options {
         auto paddingInput = new options::PaddingInput(this);
         auto paddingLabel = new QLabel("Padding:",this);
         layout->addRow(paddingLabel, paddingInput);
+        connect(paddingInput, &PaddingInput::currentIndexChanged, dialogButtonBox->button(QDialogButtonBox::StandardButton::Ok), [D=dialogButtonBox](auto i)
+        {
+            D->button(QDialogButtonBox::StandardButton::Ok)->setEnabled(i != 0);
+        });
+        paddingInput->setCurrentIndex(1);
         return paddingInput;
     }
 

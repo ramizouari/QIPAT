@@ -33,7 +33,7 @@
 #include "image/filter/MedianFilter.h"
 #include "image/filter/edge/SobelFilter.h"
 #include "image/filter/gray/utils.h"
-#include "options/PaddingInput.h"
+#include "gui/options/PaddingInput.h"
 #include "gui/options/GrayFilterInput.h"
 #include "image/filter/edge/RobertsFilter.h"
 #include "gui/options/FilterDialog.h"
@@ -44,8 +44,8 @@
 #include "image/filter/spectral/SpectralFilter.h"
 #include "image/noise/SpeckleNoise.h"
 #include "image/filter/GaussianBlurFilter.h"
-#include "spectrum/Spectrum3DView.h"
-#include "spectrum/SpectrumView.h"
+#include "gui/spectrum/Spectrum3DView.h"
+#include "gui/spectrum/SpectrumView.h"
 #include "image/morphology/operators.h"
 #include "gui/options/SpectrumMaskDialog.h"
 #include "gui/options/SpectrumFilterDialog.h"
@@ -87,8 +87,12 @@ namespace GUI {
         editMenu->addAction("Gray",this,&MainWindow::grayFilter);
         editMenu->addAction("Spectral Mask", this, &MainWindow::addSpectralMask);
         editMenu->addAction("Spectral Filter", this, &MainWindow::addSpectralFilter);
-        editMenu->addAction("Erosion", this, &MainWindow::addErosion);
-        editMenu->addAction("Dilation", this, &MainWindow::addDilation);
+        auto morphologyMenu=editMenu->addMenu("Morphology");
+        morphologyMenu->addAction("Erosion", this, &MainWindow::addErosion);
+        morphologyMenu->addAction("Dilation", this, &MainWindow::addDilation);
+        morphologyMenu->addAction("Opening", this, &MainWindow::addOpening);
+        morphologyMenu->addAction("Closing", this, &MainWindow::addClosing);
+
 
         viewMenu = new QMenu("View", this);
         auto zoomInAction=viewMenu->addAction("Zoom in", imageLabel, &ImageView::zoomIn, QKeySequence::ZoomIn);
@@ -411,13 +415,15 @@ namespace GUI {
     void MainWindow::about() {
         QMessageBox::about(this, tr("About Image Processing"),
                            tr(R"(
-<p>The <b>Image Processing</b> example demonstrates how to combine
-Qt, OpenGL, and C++ to create a modern GUI application.</p><br>
-Created by:
+<p>The <b>Image Processing</b> This application is a simple image processing tool, supporting many image processing algorithms. <br>
+The application is developped by:
 <ul>
 <li> <a href="www.github.com/ramizouari"> Rami Zouari </a> </li>
 <li> <a href="www.github.com/saief1999"> Saief Eddine Zneti </a> </li>
-</ul>)"));
+<li> <a href="www.github.com"> Mehdi Ben Chikha </a> </li>
+<li> <a href="www.github.com/Ghassen-Da"> Ghassen Daoud </a> </li>
+
+</ul></p>)"));
 
     }
 
@@ -629,5 +635,31 @@ Created by:
     void MainWindow::updateSelectedFile(QString path) {
         imageLabel->setFilePath(path);
         this->setWindowTitle(QString("ImageProcessing - %1").arg(path.split("/").last()));
+    }
+
+    void MainWindow::addOpening() {
+        options::FilterDialog dialog(this);
+        auto matInput=dialog.createMatrixInput();
+        dialog.finalize();
+        connect(&dialog, &QDialog::accepted, [matInput,this]() {
+            *imageLabel->getData() = std::move(image::filter::morphology::operators::opening(*imageLabel->getData(),matInput->getConvolutionMatrix()));
+            imageLabel->updateQImage();
+            imageInformationBar->update(*imageLabel->getData());
+        });
+        dialog.resize(600,600);
+        dialog.exec();
+    }
+
+    void MainWindow::addClosing() {
+        options::FilterDialog dialog(this);
+        auto matInput=dialog.createMatrixInput();
+        dialog.finalize();
+        connect(&dialog, &QDialog::accepted, [matInput,this]() {
+            *imageLabel->getData() = std::move(image::filter::morphology::operators::closing(*imageLabel->getData(),matInput->getConvolutionMatrix()));
+            imageLabel->updateQImage();
+            imageInformationBar->update(*imageLabel->getData());
+        });
+        dialog.resize(600,600);
+        dialog.exec();
     }
 } // GUI

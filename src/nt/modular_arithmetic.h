@@ -24,11 +24,11 @@ namespace nt {
 
         cyclic(int o = 0) : n((o + m) % m) {}
 
-        bool operator==(int O) const {
+        bool operator==(integer O) const {
             return n == (m + O) % m;
         }
 
-        bool operator!=(int O) const {
+        bool operator!=(integer O) const {
             return n != (m + O) % m;
         }
 
@@ -313,7 +313,7 @@ namespace nt {
         cyclic_field a = 2;
         while (legendre_symbol(a * a - n) != -1)
             ++a;
-        poly::extension_polynomial_t q = {poly::polynomial<cyclic_field>({n - a * a, 0, 1})};
+        poly::extension_polynomial_t<cyclic_field> q = {poly::polynomial<cyclic_field>({n - a * a, 0, 1})};
         poly::d_ring_extension<cyclic_field> phi(std::vector<cyclic_field>{a, 1}, q);
         return pow(phi, (cyclic_field::m + 1) / 2, q)[0];
     }

@@ -69,7 +69,7 @@ namespace image {
             for(int j=0;j<image.height;j++)
             {
                 for (int k=0 ; k<image.nb_channel; k++) {
-                    unsigned char pixel = (unsigned char) image.data[k][i][j];
+                    auto pixel = (unsigned char) image.data[k][i][j];
                     file.write(reinterpret_cast<char *>(&pixel), 1);
                 }
             }
