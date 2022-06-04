@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
-include_directories(.)
+include_directories(src)
 find_package(Qt6 COMPONENTS
         Core
         Gui
@@ -15,94 +15,95 @@ find_package(Qt6 COMPONENTS
         REQUIRED)
 
 find_package(muparser REQUIRED)
+find_package(Boost COMPONENTS unit_test_framework)
 
 
 set(UTILITY_SOURCES
-        utility.h utility.cpp)
+        src/utility.h src/utility.cpp)
 
 set(CORE_SOURCES
-        image/Image.h image/Image.cpp
-        image/ImageReader.h image/ImageReader.cpp
-        image/stats.h image/stats.cpp
-        image/filter/Filter.cpp image/filter/Filter.h
-        image/Padding.cpp image/Padding.h
-        image/noise/ImpulsiveNoise.cpp image/noise/ImpulsiveNoise.h
-        image/noise/Noise.cpp image/noise/Noise.h
-        image/noise/GaussianNoise.cpp image/noise/GaussianNoise.h
-        image/filter/MedianFilter.cpp image/filter/MedianFilter.h
-        image/filter/ConvolutionalFilter.cpp image/filter/ConvolutionalFilter.h
-        image/filter/MeanBlurFilter.cpp image/filter/MeanBlurFilter.h
-        image/filter/edge/LaplacianFilter.cpp image/filter/edge/LaplacianFilter.h
-        image/filter/IdentityFilter.cpp image/filter/IdentityFilter.h
-        image/utils.h image/utils.cpp
-        image/filter/edge/SobelFilter.cpp image/filter/edge/SobelFilter.h
-        image/filter/gray/GrayFilter.cpp image/filter/gray/GrayFilter.h
-        image/filter/gray/MaxChannelFilter.cpp image/filter/gray/MaxChannelFilter.h
-        image/filter/gray/MeanChannelFilter.cpp image/filter/gray/MeanChannelFilter.h
-        image/filter/edge/EdgeDetectionFilter.cpp image/filter/edge/EdgeDetectionFilter.h
-        image/filter/differential/DifferentialFilter.cpp image/filter/differential/DifferentialFilter.h
-        image/filter/differential/SobelOperator.cpp image/filter/differential/SobelOperator.h
-        image/filter/gray/utils.cpp image/filter/gray/utils.h
-        image/filter/differential/LaplacianOperator.cpp image/filter/differential/LaplacianOperator.h
-        image/filter/gray/L1NormChannelFilter.cpp image/filter/gray/L1NormChannelFilter.h
-        image/filter/gray/L2NormChannelFilter.cpp image/filter/gray/L2NormChannelFilter.h
-        image/filter/differential/RobertsOperator.cpp image/filter/differential/RobertsOperator.h
-        image/filter/edge/RobertsFilter.cpp image/filter/edge/RobertsFilter.h
-        image/filter/global/IntensityFilter.cpp image/filter/global/IntensityFilter.h
-        image/filter/global/HistogramEqualization.cpp image/filter/global/HistogramEqualization.h
-        image/filter/global/GlobalFilter.cpp image/filter/global/GlobalFilter.h
-        image/filter/global/IntensityMapper.cpp image/filter/global/IntensityMapper.h
-        image/segmentation/OtsuSegmentation.cpp image/segmentation/OtsuSegmentation.h
-        image/filter/spectral/SpectralFilter.cpp image/filter/spectral/SpectralFilter.h
-        image/morphology/operators.cpp image/morphology/operators.h
-        image/noise/SpeckleNoise.cpp image/noise/SpeckleNoise.h
-        image/filter/GaussianBlurFilter.cpp image/filter/GaussianBlurFilter.h
-        image/segmentation/ThresholdSegmentation.cpp image/segmentation/ThresholdSegmentation.h
-        image/Operator.cpp image/Operator.h
-        image/segmentation/Segmentation.cpp image/segmentation/Segmentation.h
-        image/Mask.cpp image/Mask.h
-        image/ImageWriter.h image/ImageWriter.cpp
-        image/ImageFormat.h
+        src/image/Image.h src/image/Image.cpp
+        src/image/ImageReader.h src/image/ImageReader.cpp
+        src/image/stats.h src/image/stats.cpp
+        src/image/filter/Filter.cpp src/image/filter/Filter.h
+        src/image/Padding.cpp src/image/Padding.h
+        src/image/noise/ImpulsiveNoise.cpp src/image/noise/ImpulsiveNoise.h
+        src/image/noise/Noise.cpp src/image/noise/Noise.h
+        src/image/noise/GaussianNoise.cpp src/image/noise/GaussianNoise.h
+        src/image/filter/MedianFilter.cpp src/image/filter/MedianFilter.h
+        src/image/filter/ConvolutionalFilter.cpp src/image/filter/ConvolutionalFilter.h
+        src/image/filter/MeanBlurFilter.cpp src/image/filter/MeanBlurFilter.h
+        src/image/filter/edge/LaplacianFilter.cpp src/image/filter/edge/LaplacianFilter.h
+        src/image/filter/IdentityFilter.cpp src/image/filter/IdentityFilter.h
+        src/image/utils.h src/image/utils.cpp
+        src/image/filter/edge/SobelFilter.cpp src/image/filter/edge/SobelFilter.h
+        src/image/filter/gray/GrayFilter.cpp src/image/filter/gray/GrayFilter.h
+        src/image/filter/gray/MaxChannelFilter.cpp src/image/filter/gray/MaxChannelFilter.h
+        src/image/filter/gray/MeanChannelFilter.cpp src/image/filter/gray/MeanChannelFilter.h
+        src/image/filter/edge/EdgeDetectionFilter.cpp src/image/filter/edge/EdgeDetectionFilter.h
+        src/image/filter/differential/DifferentialFilter.cpp src/image/filter/differential/DifferentialFilter.h
+        src/image/filter/differential/SobelOperator.cpp src/image/filter/differential/SobelOperator.h
+        src/image/filter/gray/utils.cpp src/image/filter/gray/utils.h
+        src/image/filter/differential/LaplacianOperator.cpp src/image/filter/differential/LaplacianOperator.h
+        src/image/filter/gray/L1NormChannelFilter.cpp src/image/filter/gray/L1NormChannelFilter.h
+        src/image/filter/gray/L2NormChannelFilter.cpp src/image/filter/gray/L2NormChannelFilter.h
+        src/image/filter/differential/RobertsOperator.cpp src/image/filter/differential/RobertsOperator.h
+        src/image/filter/edge/RobertsFilter.cpp src/image/filter/edge/RobertsFilter.h
+        src/image/filter/global/IntensityFilter.cpp src/image/filter/global/IntensityFilter.h
+        src/image/filter/global/HistogramEqualization.cpp src/image/filter/global/HistogramEqualization.h
+        src/image/filter/global/GlobalFilter.cpp src/image/filter/global/GlobalFilter.h
+        src/image/filter/global/IntensityMapper.cpp src/image/filter/global/IntensityMapper.h
+        src/image/segmentation/OtsuSegmentation.cpp src/image/segmentation/OtsuSegmentation.h
+        src/image/filter/spectral/SpectralFilter.cpp src/image/filter/spectral/SpectralFilter.h
+        src/image/morphology/operators.cpp src/image/morphology/operators.h
+        src/image/noise/SpeckleNoise.cpp src/image/noise/SpeckleNoise.h
+        src/image/filter/GaussianBlurFilter.cpp src/image/filter/GaussianBlurFilter.h
+        src/image/segmentation/ThresholdSegmentation.cpp src/image/segmentation/ThresholdSegmentation.h
+        src/image/Operator.cpp src/image/Operator.h
+        src/image/segmentation/Segmentation.cpp src/image/segmentation/Segmentation.h
+        src/image/Mask.cpp src/image/Mask.h
+        src/image/ImageWriter.h src/image/ImageWriter.cpp
+        src/image/ImageFormat.h
         )
 set(GUI_SOURCES
-        main.cpp
-        gui/mainwindow.cpp gui/mainwindow.h gui/mainwindow.ui
-        gui/histogram/Histogram.cpp gui/histogram/Histogram.h gui/histogram/histogram.ui
-        gui/imageview.cpp gui/imageview.h gui/imageview.ui
-        gui/histogram/HistogramCurveView.cpp gui/histogram/HistogramCurveView.h
-        gui/statusbar/ImageInformationBar.cpp gui/statusbar/ImageInformationBar.h
-        gui/options/PaddingInput.cpp gui/options/PaddingInput.h
-        gui/options/GrayFilterInput.cpp gui/options/GrayFilterInput.h
-        gui/options/FilterDialog.cpp gui/options/FilterDialog.h
-        gui/histogram/HistogramCurve.cpp gui/histogram/HistogramCurve.h
-        gui/options/ContrastDialog.cpp gui/options/ContrastDialog.h
-        gui/options/ContrastTransformationView.cpp gui/options/ContrastTransformationView.h
-        gui/options/ContrastForm.cpp gui/options/ContrastForm.h
-        gui/options/SpectrumMaskDialog.cpp gui/options/SpectrumMaskDialog.h
-        gui/spectrum/mask/RectangleMaskForm.cpp gui/spectrum/mask/RectangleMaskForm.h
-        gui/spectrum/mask/MaskForm.cpp gui/spectrum/mask/MaskForm.h
-        gui/spectrum/mask/CircleMaskForm.cpp gui/spectrum/mask/CircleMaskForm.h
-        gui/spectrum/mask/RelationalEquationMaskForm.cpp gui/spectrum/mask/RelationalEquationMaskForm.h
-        gui/spectrum/filter/FilterForm.cpp gui/spectrum/filter/FilterForm.h
-        gui/options/SpectrumFilterDialog.cpp gui/options/SpectrumFilterDialog.h
-        gui/spectrum/filter/GaussianBlurForm.cpp gui/spectrum/filter/GaussianBlurForm.h
-        gui/spectrum/filter/MeanBlurForm.cpp gui/spectrum/filter/MeanBlurForm.h
-        gui/spectrum/SpectrumFilterView.cpp gui/spectrum/SpectrumFilterView.h
-        gui/spectrum/filter/MedianForm.cpp gui/spectrum/filter/MedianForm.h
-        gui/spectrum/filter/FunctionFilterForm.cpp gui/spectrum/filter/FunctionFilterForm.h
-        gui/options/MatrixExpression.cpp gui/options/MatrixExpression.h
-        gui/options/MatrixInput.cpp gui/options/MatrixInput.h
-        gui/options/MatrixSheet.cpp gui/options/MatrixSheet.h
-        gui/spectrum/Spectrum3DView.cpp gui/spectrum/Spectrum3DView.h
-        gui/spectrum/SpectrumView.cpp gui/spectrum/SpectrumView.h
-        gui/spectrum/SpectrumMaskView.cpp gui/spectrum/SpectrumMaskView.h
+        src/main.cpp
+        src/gui/mainwindow.cpp src/gui/mainwindow.h src/gui/mainwindow.ui
+        src/gui/histogram/Histogram.cpp src/gui/histogram/Histogram.h src/gui/histogram/histogram.ui
+        src/gui/imageview.cpp src/gui/imageview.h src/gui/imageview.ui
+        src/gui/histogram/HistogramCurveView.cpp src/gui/histogram/HistogramCurveView.h
+        src/gui/statusbar/ImageInformationBar.cpp src/gui/statusbar/ImageInformationBar.h
+        src/gui/options/PaddingInput.cpp src/gui/options/PaddingInput.h
+        src/gui/options/GrayFilterInput.cpp src/gui/options/GrayFilterInput.h
+        src/gui/options/FilterDialog.cpp src/gui/options/FilterDialog.h
+        src/gui/histogram/HistogramCurve.cpp src/gui/histogram/HistogramCurve.h
+        src/gui/options/ContrastDialog.cpp src/gui/options/ContrastDialog.h
+        src/gui/options/ContrastTransformationView.cpp src/gui/options/ContrastTransformationView.h
+        src/gui/options/ContrastForm.cpp src/gui/options/ContrastForm.h
+        src/gui/options/SpectrumMaskDialog.cpp src/gui/options/SpectrumMaskDialog.h
+        src/gui/spectrum/mask/RectangleMaskForm.cpp src/gui/spectrum/mask/RectangleMaskForm.h
+        src/gui/spectrum/mask/MaskForm.cpp src/gui/spectrum/mask/MaskForm.h
+        src/gui/spectrum/mask/CircleMaskForm.cpp src/gui/spectrum/mask/CircleMaskForm.h
+        src/gui/spectrum/mask/RelationalEquationMaskForm.cpp src/gui/spectrum/mask/RelationalEquationMaskForm.h
+        src/gui/spectrum/filter/FilterForm.cpp src/gui/spectrum/filter/FilterForm.h
+        src/gui/options/SpectrumFilterDialog.cpp src/gui/options/SpectrumFilterDialog.h
+        src/gui/spectrum/filter/GaussianBlurForm.cpp src/gui/spectrum/filter/GaussianBlurForm.h
+        src/gui/spectrum/filter/MeanBlurForm.cpp src/gui/spectrum/filter/MeanBlurForm.h
+        src/gui/spectrum/SpectrumFilterView.cpp src/gui/spectrum/SpectrumFilterView.h
+        src/gui/spectrum/filter/MedianForm.cpp src/gui/spectrum/filter/MedianForm.h
+        src/gui/spectrum/filter/FunctionFilterForm.cpp src/gui/spectrum/filter/FunctionFilterForm.h
+        src/gui/options/MatrixExpression.cpp src/gui/options/MatrixExpression.h
+        src/gui/options/MatrixInput.cpp src/gui/options/MatrixInput.h
+        src/gui/options/MatrixSheet.cpp src/gui/options/MatrixSheet.h
+        src/gui/spectrum/Spectrum3DView.cpp src/gui/spectrum/Spectrum3DView.h
+        src/gui/spectrum/SpectrumView.cpp src/gui/spectrum/SpectrumView.h
+        src/gui/spectrum/SpectrumMaskView.cpp src/gui/spectrum/SpectrumMaskView.h
         )
 
 set(PARSER_SOURCES
-        parser/PlanarParser.h
-        parser/LineParser.h
-        parser/ParametricParser.h
-        parser/ImageFunctionParser.cpp parser/ImageFunctionParser.h
+        src/parser/PlanarParser.h
+        src/parser/LineParser.h
+        src/parser/ParametricParser.h
+        src/parser/ImageFunctionParser.cpp src/parser/ImageFunctionParser.h
         )
 
 set(PROJECT_SOURCES
@@ -125,3 +126,21 @@ target_link_libraries(ImageProcessing
         muparser
         )
 
+add_executable(LinearAlgebraTest tests/linear_algebra/linear_algebra_approximate_test.cpp tests/linear_algebra/linear_algebra_exact_test.cpp tests/print.h)
+add_executable(NumberTheoryTest tests/number_theory/modular_arithmetic_test.cpp tests/number_theory/number_theory_test.cpp tests/print.h)
+add_executable(PolynomialTest tests/polynomial/polynomial_test.cpp tests/print.h tests/polynomial/polynomial_test.cpp tests/polynomial/fft_test.cpp)
+add_executable(DataStructuresTest tests/data_structures/segment_tree_test.cpp tests/data_structures/fenwick_tree.cpp tests/print.h tests/data_structures/order_statistic_tree_test.cpp)
+
+add_executable(MachineLearningTest tests/ml/machine_learning_test.cpp tests/print.h)
+
+add_executable(TopologyTest tests/topology/topology_test.cpp tests/print.h)
+add_executable(AlgebraTest tests/algebra/abstract_algebra.cpp tests/print.h tests/algebra/binary_operation.cpp)
+add_executable(ImageCoreTest tests/image/basic_image_test.cpp ${CORE_SOURCES} tests/image/image_filters_test.cpp tests/image/image_noise_test.cpp)
+target_link_libraries (LinearAlgebraTest ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} )
+target_link_libraries (NumberTheoryTest ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
+target_link_libraries(PolynomialTest ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
+target_link_libraries(DataStructuresTest ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
+target_link_libraries(MachineLearningTest ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
+target_link_libraries(TopologyTest ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
+target_link_libraries(AlgebraTest ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
+target_link_libraries(ImageCoreTest ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
