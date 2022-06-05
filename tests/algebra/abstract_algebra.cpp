@@ -2,7 +2,8 @@
 
 
 
-
+#define BOOST_TEST_MODULE ABSTRACT_ALGEBRA_TEST
+#define BOOST_TEST_DYN_LINK
 #include <boost/test/unit_test.hpp>
 #include <boost/mpl/list.hpp>
 #include "nt/modular_arithmetic.h"

@@ -13,6 +13,7 @@
 #include "ml/ml.h"
 
 namespace dataset=boost::unit_test::data;
+using namespac
 
 struct iris_fixture
 {

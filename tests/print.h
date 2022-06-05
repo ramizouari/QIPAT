@@ -48,6 +48,12 @@ inline std::ostream& operator<<(std::ostream& os, const poly::polynomial<T>& a)
     return os;
 }
 
+template<typename A,typename B>
+inline std::ostream& operator<<(std::ostream& os,const std::pair<A,B>& p)
+{
+    return os<<"("<<p.first<<","<<p.second<<")";
+}
+
 template<typename T>
 inline std::ostream& operator<<(std::ostream& os, const std::vector<T>& a)
 {
@@ -57,6 +63,8 @@ inline std::ostream& operator<<(std::ostream& os, const std::vector<T>& a)
     os << "]";
     return os;
 }
+
+
 
 
 #endif //CPLIBRARY_PRINT_H

@@ -127,26 +127,26 @@ target_link_libraries(ImageProcessing
         muparser
         )
 
-#add_executable(LinearAlgebraTest tests/linear_algebra/linear_algebra_approximate_test.cpp tests/linear_algebra/linear_algebra_exact_test.cpp tests/print.h)
-#add_executable(NumberTheoryTest tests/number_theory/modular_arithmetic_test.cpp tests/number_theory/number_theory_test.cpp tests/print.h)
-#add_executable(PolynomialTest tests/polynomial/polynomial_test.cpp tests/print.h tests/polynomial/polynomial_test.cpp tests/polynomial/fft_test.cpp)
-#add_executable(DataStructuresTest tests/data_structures/segment_tree_test.cpp tests/data_structures/fenwick_tree.cpp tests/print.h tests/data_structures/order_statistic_tree_test.cpp)
+add_executable(LinearAlgebraTest tests/linear_algebra/linear_algebra_approximate_test.cpp tests/linear_algebra/linear_algebra_exact_test.cpp tests/print.h)
+add_executable(NumberTheoryTest tests/number_theory/modular_arithmetic_test.cpp tests/number_theory/number_theory_test.cpp tests/print.h)
+add_executable(PolynomialTest tests/polynomial/polynomial_test.cpp tests/print.h tests/polynomial/polynomial_test.cpp tests/polynomial/fft_test.cpp)
+add_executable(DataStructuresTest tests/data_structures/segment_tree_test.cpp tests/data_structures/fenwick_tree.cpp tests/print.h tests/data_structures/order_statistic_tree_test.cpp)
 
 #add_executable(MachineLearningTest tests/ml/machine_learning_test.cpp tests/print.h)
 
-#add_executable(TopologyTest tests/topology/topology_test.cpp tests/print.h)
-#add_executable(AlgebraTest tests/algebra/abstract_algebra.cpp tests/print.h tests/algebra/binary_operation.cpp)
-#add_executable(ImageCoreTest tests/image/basic_image_test.cpp ${CORE_SOURCES} tests/image/image_filters_test.cpp tests/image/image_noise_test.cpp)
-#add_executable(ImageGUITest tests/gui/GUITest.cpp tests/gui/ImageViewTest.cpp tests/gui/ImageViewTest.h src/gui/imageview.cpp ${CORE_SOURCES})
-#target_link_libraries (LinearAlgebraTest ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} )
-#target_link_libraries (NumberTheoryTest ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
-#target_link_libraries(PolynomialTest ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
-#target_link_libraries(DataStructuresTest ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
+add_executable(TopologyTest tests/topology/topology_test.cpp tests/print.h)
+add_executable(AlgebraTest tests/algebra/abstract_algebra.cpp tests/print.h tests/algebra/binary_operation.cpp)
+add_executable(ImageCoreTest tests/image/basic_image_test.cpp ${CORE_SOURCES} tests/image/image_filters_test.cpp tests/image/image_noise_test.cpp)
+add_executable(ImageGUITest tests/gui/GUITest.cpp tests/gui/ImageViewTest.cpp tests/gui/ImageViewTest.h src/gui/imageview.cpp ${CORE_SOURCES})
+target_link_libraries (LinearAlgebraTest ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} )
+target_link_libraries (NumberTheoryTest ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
+target_link_libraries(PolynomialTest ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
+target_link_libraries(DataStructuresTest ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
 #target_link_libraries(MachineLearningTest ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
-#target_link_libraries(TopologyTest ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
-#target_link_libraries(AlgebraTest ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
-#target_link_libraries(ImageCoreTest ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
-#target_link_libraries(ImageGUITest PRIVATE Qt::Test Qt::Core Qt::Widgets Qt::Gui)
+target_link_libraries(TopologyTest ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
+target_link_libraries(AlgebraTest ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
+target_link_libraries(ImageCoreTest ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
+target_link_libraries(ImageGUITest PRIVATE Qt::Test Qt::Core Qt::Widgets Qt::Gui)
 
 
 # Used for installing

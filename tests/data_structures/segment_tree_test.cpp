@@ -37,17 +37,6 @@ concept is_iterable = requires(const T&a)
 template<typename T,typename O>
 concept is_invertible = std::is_base_of<invertible_operation<T>,O>::value;
 
-template<typename T>
-std::ostream& operator<<(std::ostream& os, const std::vector<T>& a)
-{
-    os << "[";
-    for(auto& x:a)
-        os << x << ",";
-    os << "]";
-    return os;
-}
-
-
 namespace boost::test_tools {
     template<typename T>
     struct tt_detail::print_log_value<std::vector<T> > {
