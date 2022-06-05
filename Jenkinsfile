@@ -1,5 +1,5 @@
 pipeline {
-    agent { docker { image 'node:16.13.1-alpine' } }
+    agent { docker { image 'ubuntu:20.04' } }
     options {
         skipStagesAfterUnstable()
     }
@@ -7,16 +7,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building'
-            }
-        }
-        stage('Test') {
-            steps {
-                echo 'Testing'
-            }
-        }
-        stage('Deploy') {
-            steps {
-                echo 'Deploying'
+		sh 'ls'
             }
         }
     }

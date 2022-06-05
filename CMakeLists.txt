@@ -126,21 +126,44 @@ target_link_libraries(ImageProcessing
         muparser
         )
 
-add_executable(LinearAlgebraTest tests/linear_algebra/linear_algebra_approximate_test.cpp tests/linear_algebra/linear_algebra_exact_test.cpp tests/print.h)
-add_executable(NumberTheoryTest tests/number_theory/modular_arithmetic_test.cpp tests/number_theory/number_theory_test.cpp tests/print.h)
-add_executable(PolynomialTest tests/polynomial/polynomial_test.cpp tests/print.h tests/polynomial/polynomial_test.cpp tests/polynomial/fft_test.cpp)
-add_executable(DataStructuresTest tests/data_structures/segment_tree_test.cpp tests/data_structures/fenwick_tree.cpp tests/print.h tests/data_structures/order_statistic_tree_test.cpp)
+#add_executable(LinearAlgebraTest tests/linear_algebra/linear_algebra_approximate_test.cpp tests/linear_algebra/linear_algebra_exact_test.cpp tests/print.h)
+#add_executable(NumberTheoryTest tests/number_theory/modular_arithmetic_test.cpp tests/number_theory/number_theory_test.cpp tests/print.h)
+#add_executable(PolynomialTest tests/polynomial/polynomial_test.cpp tests/print.h tests/polynomial/polynomial_test.cpp tests/polynomial/fft_test.cpp)
+#add_executable(DataStructuresTest tests/data_structures/segment_tree_test.cpp tests/data_structures/fenwick_tree.cpp tests/print.h tests/data_structures/order_statistic_tree_test.cpp)
 
-add_executable(MachineLearningTest tests/ml/machine_learning_test.cpp tests/print.h)
+#add_executable(MachineLearningTest tests/ml/machine_learning_test.cpp tests/print.h)
 
-add_executable(TopologyTest tests/topology/topology_test.cpp tests/print.h)
-add_executable(AlgebraTest tests/algebra/abstract_algebra.cpp tests/print.h tests/algebra/binary_operation.cpp)
-add_executable(ImageCoreTest tests/image/basic_image_test.cpp ${CORE_SOURCES} tests/image/image_filters_test.cpp tests/image/image_noise_test.cpp)
-target_link_libraries (LinearAlgebraTest ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} )
-target_link_libraries (NumberTheoryTest ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
-target_link_libraries(PolynomialTest ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
-target_link_libraries(DataStructuresTest ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
-target_link_libraries(MachineLearningTest ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
-target_link_libraries(TopologyTest ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
-target_link_libraries(AlgebraTest ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
-target_link_libraries(ImageCoreTest ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
+#add_executable(TopologyTest tests/topology/topology_test.cpp tests/print.h)
+#add_executable(AlgebraTest tests/algebra/abstract_algebra.cpp tests/print.h tests/algebra/binary_operation.cpp)
+#add_executable(ImageCoreTest tests/image/basic_image_test.cpp ${CORE_SOURCES} tests/image/image_filters_test.cpp tests/image/image_noise_test.cpp)
+#target_link_libraries (LinearAlgebraTest ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} )
+#target_link_libraries (NumberTheoryTest ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
+#target_link_libraries(PolynomialTest ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
+#target_link_libraries(DataStructuresTest ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
+#target_link_libraries(MachineLearningTest ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
+#target_link_libraries(TopologyTest ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
+#target_link_libraries(AlgebraTest ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
+#target_link_libraries(ImageCoreTest ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
+
+
+
+# Used for installing 
+
+#install(TARGETS  ImageProcessing RUNTIME DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/bin)
+install(TARGETS ImageProcessing
+        RUNTIME DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/bin
+        LIBRARY DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/lib
+        ARCHIVE DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/lib)
+
+# Used for packaging 
+
+#include any runtime libraries that are needed by the project for the current plateform
+#include(InstallRequiredSystemLibraries)
+
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/License.txt")
+#set(CPACK_PACKAGE_VERSION_MAJOR "${Tutorial_VERSION_MAJOR}")
+#set(CPACK_PACKAGE_VERSION_MINOR "${Tutorial_VERSION_MINOR}")
+set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}-0.1-linux")
+set(CPACK_GENERATOR TGZ)
+set(CPACK_SOURCE_GENERATOR TGZ)
+include(CPack)
