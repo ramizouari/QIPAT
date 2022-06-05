@@ -1,8 +1,8 @@
-//
-// Created by ramizouari on 11/04/2022.
-//
-#define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MODULE ALGEBRA_TEST
+
+
+
+
+
 #include <boost/test/unit_test.hpp>
 #include <boost/mpl/list.hpp>
 #include "nt/modular_arithmetic.h"

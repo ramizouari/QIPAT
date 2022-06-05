@@ -39,7 +39,7 @@ inline std::ostream & operator<<(std::ostream & os,const linalg::s_matrix<T,n,m>
 
 
 template<typename T>
-inline std::ostream& operator<<(std::ostream& os, const polynomial<T>& a)
+inline std::ostream& operator<<(std::ostream& os, const poly::polynomial<T>& a)
 {
     os << "[";
     for(auto& x:a)

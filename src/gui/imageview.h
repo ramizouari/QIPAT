@@ -11,6 +11,11 @@
 #include "image/Image.h"
 #include "image/ImageFormat.h"
 
+#ifdef TEST_MODE
+#define protected public
+#define private public
+#endif
+
 namespace GUI {
     //QT_BEGIN_NAMESPACE
     //namespace Ui { class ImageView; }
@@ -52,5 +57,10 @@ namespace GUI {
 
     };
 } // GUI
+
+#ifdef TEST_MODE
+#undef protected
+#undef private
+#endif
 
 #endif //IMAGEPROCESSING_IMAGEVIEW_H
