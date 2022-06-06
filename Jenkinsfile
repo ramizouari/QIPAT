@@ -36,6 +36,7 @@ pipeline {
                 hicolor-icon-theme \
                 openssl \
                 curl \
+                jq \
                 ca-certificates wget'
             }
         }
