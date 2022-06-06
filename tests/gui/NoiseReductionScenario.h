@@ -1,0 +1,14 @@
+//
+// Created by ramizouari on 06/06/22.
+//
+
+#ifndef IMAGEPROCESSING_NOISEREDUCTIONSCENARIO_H
+#define IMAGEPROCESSING_NOISEREDUCTIONSCENARIO_H
+
+
+class NoiseReductionScenario {
+
+};
+
+
+#endif //IMAGEPROCESSING_NOISEREDUCTIONSCENARIO_H
