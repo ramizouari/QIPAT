@@ -8,11 +8,11 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 // update repositories
-                sh 'sudo apt-get -y -qq update'
+                sh 'apt-get -y -qq update'
                 // upgrade packages
-                sh 'sudo apt-get -y upgrade'
+                sh 'apt-get -y upgrade'
                 // Install required system dependencies
-                sh 'sudo apt-get -y -qq --no-install-recommends install \
+                sh 'apt-get -y -qq --no-install-recommends install \
                 python3 \
                 python3-pip \
                 fuse \
@@ -30,7 +30,7 @@ pipeline {
         stage('Install Qt Dependencies') {
             steps {
                 // Install required dependencies for QIPAT
-                sh 'sudo apt-get -y -qq install \
+                sh 'apt-get -y -qq install \
                 libxkbcommon-dev \
                 libglu1-mesa-dev \
                 freeglut3-dev \
@@ -45,7 +45,7 @@ pipeline {
                 sh 'popd'
 
                 // Install Qt Specific dependencies
-                sh 'sudo apt-get -y -qq install \
+                sh 'apt-get -y -qq install \
                 qt6-tools-dev \
                 libqt6charts6-dev \
                 libqt6datavisualization6-dev qt6-declarative-dev'
