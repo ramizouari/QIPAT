@@ -4,6 +4,7 @@ pipeline {
         skipStagesAfterUnstable()
     }
     stages {
+
         stage('Install Dependencies') {
             steps {
                 // update repositories
@@ -26,9 +27,10 @@ pipeline {
                 '
             }
         }
+
         stage('Install Qt Dependencies') {
             steps {
-                // Install required dependecies for QIpat
+                // Install required dependencies for QIPAT
                 sh 'apt-get -y -qq install \
                 libxkbcommon-dev \
                 libglu1-mesa-dev \
@@ -59,6 +61,7 @@ pipeline {
             sh 'make -j4 && make install' // 4 jobs at once
             sh 'popd'
         }
+
         stage('Build packaging tools') {
             steps {
                 sh 'pushd bin'
@@ -76,18 +79,16 @@ pipeline {
             }
         }
 
-        stage("Run packaging tools") {
+        stage("Package the Project") {
             steps {
-                
+                sh 'mv ../resources/* .'
+                sh 'mkdir AppDir'
+                sh 'export QMAKE=/usr/bin/qmake6' // Needed by linux deploy
+                sh './linuxdeploy-x86_64.AppImage --appimage-extract-and-run --appdir AppDir -e ImageProcessing -i QIPAT.png -d QIPAT.desktop --plugin qt --output appimage' // appimage-extract-and-run : because we are in a docker container
+                sh 'ls'
+                sh 'mv QIPAT*.AppImage QIPAT.AppImage'
+                sh 'popd'
             }
         }
-
-        // stage('Install Qt Dependencies') {
-        //     steps {
-
-        //     }
-        // }
-
-
     }
 }
