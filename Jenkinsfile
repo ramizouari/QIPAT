@@ -23,8 +23,7 @@ pipeline {
                 appstream \
                 hicolor-icon-theme \
                 openssl \
-                ca-certificates wget
-                '
+                ca-certificates wget'
             }
         }
 
@@ -35,8 +34,7 @@ pipeline {
                 libxkbcommon-dev \
                 libglu1-mesa-dev \
                 freeglut3-dev \
-                mesa-common-dev libboost-all-dev
-                '
+                mesa-common-dev libboost-all-dev'
 
                 // Build muparser
                 sh 'wget https://github.com/beltoforion/muparser/archive/refs/tags/v2.3.3-1.tar.gz'
@@ -50,8 +48,7 @@ pipeline {
                 sh 'apt-get -y -qq install \
                 qt6-tools-dev \
                 libqt6charts6-dev \
-                libqt6datavisualization6-dev qt6-declarative-dev 
-                '
+                libqt6datavisualization6-dev qt6-declarative-dev'
             }
         }
 
