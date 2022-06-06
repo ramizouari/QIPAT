@@ -45,7 +45,7 @@ pipeline {
                 sh 'popd'
 
                 // Install Qt Specific dependencies
-                sh 'apt-get -y -qq install \
+                sh 'sudo apt-get -y -qq install \
                 qt6-tools-dev \
                 libqt6charts6-dev \
                 libqt6datavisualization6-dev qt6-declarative-dev'
