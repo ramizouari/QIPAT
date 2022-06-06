@@ -1,7 +1,7 @@
 pipeline {
     agent { docker { 
         image 'ubuntu:22.04' 
-        args '-u ubuntu:ubuntu -e QMAKE=/usr/bin/qmake6'
+        args '-u root:root -e QMAKE=/usr/bin/qmake6'
         }     
     }
     options {
@@ -97,6 +97,7 @@ pipeline {
                     sh 'ls'
                     sh 'mv QIPAT*.AppImage QIPAT.AppImage'
                 }
+                sh 'rm -rf *'
             }
         }
     }
