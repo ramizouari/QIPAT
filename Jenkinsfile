@@ -111,19 +111,23 @@ pipeline {
         }
 
         stage("Get Changelog and Tag") {
-            // Install npm & node
-            sh 'apt-get -y -qq install nodejs npm'
-            
-            sh 'npm install git-changelog-command-line'
-            sh 'npx git-changelog-command-line --print-next-version > tag'
-            sh 'npx git-changelog-command-line -std -t cicd/changelog.template > changelog'
+            steps {
+                // Install npm & node
+                sh 'apt-get -y -qq install nodejs npm'
+
+                sh 'npm install git-changelog-command-line'
+                sh 'npx git-changelog-command-line --print-next-version > tag'
+                sh 'npx git-changelog-command-line -std -t cicd/changelog.template > changelog'
+            }
         }
 
         stage("Upload To Github") {
-            sh 'chmod a+x cicd/upload-github.sh'
-            sh 'mv cicd/upload-github.sh bin/' 
-            dir('bin') {
-                sh './upload-github.sh $GITHUB_TOKEN QIPAT.AppImage ../tag ../changelog'
+            steps{
+                sh 'chmod a+x cicd/upload-github.sh'
+                sh 'mv cicd/upload-github.sh bin/' 
+                dir('bin') {
+                    sh './upload-github.sh $GITHUB_TOKEN QIPAT.AppImage ../tag ../changelog'
+                }
             }
         }
 
