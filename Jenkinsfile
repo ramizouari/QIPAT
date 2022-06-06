@@ -68,12 +68,6 @@ pipeline {
             }
         }
 
-        stage('Create Source Package') {
-            steps {
-
-            }
-        }
-
         stage('Build the Project') {
             steps {
                 sh 'cmake -DCMAKE_BUILD_TYPE=Release -B buildapp .'
