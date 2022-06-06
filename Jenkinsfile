@@ -1,7 +1,7 @@
 pipeline {
     agent { docker { 
         image 'ubuntu:22.04' 
-        args '-u root:root'
+        args '-u root:root -e QMAKE=/usr/bin/qmake6'
         }     
     }
     options {
@@ -92,7 +92,7 @@ pipeline {
                 dir('bin') {
                     sh 'mv ../resources/* .'
                     sh 'mkdir AppDir'
-                    sh 'export QMAKE=/usr/bin/qmake6' // Needed by linux deploy
+                    // sh 'export QMAKE=/usr/bin/qmake6' // Needed by linux deploy
                     sh './linuxdeploy-x86_64.AppImage --appimage-extract-and-run --appdir AppDir -e ImageProcessing -i QIPAT.png -d QIPAT.desktop --plugin qt --output appimage' // appimage-extract-and-run : because we are in a docker container
                     sh 'ls'
                     sh 'mv QIPAT*.AppImage QIPAT.AppImage'
