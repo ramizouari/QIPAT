@@ -53,10 +53,12 @@ pipeline {
         }
 
         stage('Build the Project') {
-            sh 'cmake -DCMAKE_BUILD_TYPE=Release -B build .'
-            sh 'pushd build'
-            sh 'make -j4 && make install' // 4 jobs at once
-            sh 'popd'
+            steps {
+                sh 'cmake -DCMAKE_BUILD_TYPE=Release -B build .'
+                sh 'pushd build'
+                sh 'make -j4 && make install' // 4 jobs at once
+                sh 'popd'
+            }
         }
 
         stage('Build packaging tools') {
