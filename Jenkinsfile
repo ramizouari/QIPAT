@@ -110,11 +110,20 @@ pipeline {
             }
         }
 
+        stage("Get Changelog and Tag") {
+            // Install npm & node
+            sh 'apt-get -y -qq install nodejs npm'
+            
+            sh 'npm install git-changelog-command-line'
+            sh 'npx git-changelog-command-line --print-next-version > tag'
+            sh 'npx git-changelog-command-line -std -t cicd/changelog.template > changelog'
+        }
+
         stage("Upload To Github") {
+            sh 'chmod a+x cicd/upload-github.sh'
+            sh 'mv cicd/upload-github.sh bin/' 
             dir('bin') {
-                sh 'curl -X POST -H "Authorization: token $GITHUB_TOKEN" --data "{\"tag_name\": \"v0.1.0\", \"name\": \"continuous\", \"body\": \"CICD Release\", \"draft\": false, \"prerelease\": true}" https://api.github.com/repos/ramizouari/QIPAT/releases > response'
-                sh 'cat response | sed -n -e \'s/"id":\ \([0-9]\+\),/\1/p\' | head -n 1 | sed \'s/[[:blank:]]//g\' | tee id'
-                sh 'curl -X POST -H "Authorization:token $GITHUB_TOKEN" -H "Content-Type:application/octet-stream" --data-binary QIPAT.AppImage https://uploads.github.com/repos/ramizouari/QIPAT/releases/68737653/assets?name=QIPAT.AppImage'
+                sh './upload-github.sh $GITHUB_TOKEN QIPAT.AppImage ../tag ../changelog'
             }
         }
 
