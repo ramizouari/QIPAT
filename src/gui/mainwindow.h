@@ -13,6 +13,18 @@
 #include "gui/statusbar/ImageInformationBar.h"
 #include "imageview.h"
 #include "image/ImageWriter.h"
+#include "gui/options/FilterDialog.h"
+#include <QFileDialog>
+#include <QInputDialog>
+
+
+
+#ifdef TEST_MODE
+#define protected public
+#define private public
+constexpr bool isTestMode = true;
+#endif
+
 
 namespace GUI {
     QT_BEGIN_NAMESPACE
@@ -21,6 +33,8 @@ namespace GUI {
 
     class MainWindow : public QMainWindow {
     Q_OBJECT
+    const bool isTest=false;
+    explicit MainWindow(bool isTest, QWidget *parent = nullptr);
 
     public:
         explicit MainWindow(QWidget *parent = nullptr);
@@ -31,23 +45,28 @@ namespace GUI {
 
     private:
        // Ui::MainWindow *ui;
-        QMenu *fileMenu,*statsMenu,*editMenu,*aboutMenu,*viewMenu;
+        QMenu *fileMenu,*statsMenu,*editMenu,*aboutMenu,*viewMenu,*filterMenu,*noiseMenu;
        ImageView *imageLabel,*bakImageLabel;
        ImageInformationBar* imageInformationBar;
 
-    public slots:
+    private slots:
+
        void showHistogram();
        void showHistogramCurve();
        void showSpectrum();
        void openImage();
+       void openImagePrivate(QFileDialog *dialog);
        void saveImage();
-       void saveImageAs();
+       QString saveImageAs();
+       QString saveImageAsPrivate(QFileDialog *dialog);
        void addGaussianNoise();
        void addSaltAndPepperNoise();
+       void addSaltAndPepperNoisePrivate(QInputDialog *dialog);
        void addSpeckleNoise();
        void addSobelFilter();
        void addGaussianBlurFilter();
        void addMedianFilter();
+       void addMedianFilterPrivate(options::FilterDialog* filterdialog);
        void addMeanBlurFilter();
        void addBilateralFilter();
        void addLaplacianFilter();
@@ -67,5 +86,10 @@ namespace GUI {
        void addClosing();
     };
 } // GUI
+
+#ifdef TEST_MODE
+#undef protected
+#undef private
+#endif
 
 #endif //IMAGEPROCESSING_MAINWINDOW_H

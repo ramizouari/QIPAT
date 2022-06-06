@@ -26,6 +26,11 @@ void ImageViewTest::init()
     view->imageData.reset(imgPtr);
 }
 
+
+/*
+ * Not a strong test, but it's a start as the functionality of image resizing is not yet implemented.
+ * */
+
 void ImageViewTest::testZoomIn()
 {
     auto oldFactor=view->factor;
@@ -33,7 +38,9 @@ void ImageViewTest::testZoomIn()
     QVERIFY(view->factor>oldFactor);
 }
 
-
+/*
+ * Not a strong test, but it's a start as the functionality of image resizing is not yet implemented.
+ * */
 void ImageViewTest::testZoomOut() {
     auto oldFactor=view->factor;
     view->zoomOut();
