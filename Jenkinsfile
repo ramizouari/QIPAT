@@ -60,9 +60,9 @@ pipeline {
         stage('Build the Project') {
             steps {
                 sh 'pwd'
-                ls
+                sh 'ls'
                 sh 'cmake -DCMAKE_BUILD_TYPE=Release -B build-app .'
-                ls
+                sh 'ls'
                 dir('build-app') {
                     sh 'ls'
                     sh 'make -j4 && make install' // 4 jobs at once
