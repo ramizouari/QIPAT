@@ -8,11 +8,11 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 // update repositories
-                sh 'apt-get -y -qq update'
+                sh 'sudo apt-get -y -qq update'
                 // upgrade packages
-                sh 'apt-get -y upgrade'
+                sh 'sudo apt-get -y upgrade'
                 // Install required system dependencies
-                sh 'apt-get -y -qq --no-install-recommends install \
+                sh 'sudo apt-get -y -qq --no-install-recommends install \
                 python3 \
                 python3-pip \
                 fuse \
@@ -30,7 +30,7 @@ pipeline {
         stage('Install Qt Dependencies') {
             steps {
                 // Install required dependencies for QIPAT
-                sh 'apt-get -y -qq install \
+                sh 'sudo apt-get -y -qq install \
                 libxkbcommon-dev \
                 libglu1-mesa-dev \
                 freeglut3-dev \
