@@ -123,8 +123,8 @@ pipeline {
 
         stage("Upload To Github") {
             steps{
-                sh 'chmod a+x cicd/upload-github.sh'
-                sh 'mv cicd/upload-github.sh bin/' 
+                sh 'chmod a+x cicd/github-upload.sh'
+                sh 'mv cicd/github-upload bin/' 
                 dir('bin') {
                     sh './github-upload.sh $GITHUB_TOKEN QIPAT.AppImage ../tag ../changelog'
                 }
