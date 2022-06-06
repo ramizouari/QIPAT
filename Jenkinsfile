@@ -1,7 +1,7 @@
 pipeline {
     agent { docker { 
         image 'ubuntu:22.04' 
-        args '-u jenkins:jenkins -e QMAKE=/usr/bin/qmake6'
+        args '-u ubuntu:ubuntu -e QMAKE=/usr/bin/qmake6'
         }     
     }
     options {
