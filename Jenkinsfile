@@ -43,10 +43,10 @@ pipeline {
                 // Build muparser
                 sh 'wget https://github.com/beltoforion/muparser/archive/refs/tags/v2.3.3-1.tar.gz'
                 sh 'tar -xvf v2.3.3-1.tar.gz'
-                sh 'pushd muparser-2.3.3-1'
+                sh 'cd muparser-2.3.3-1'
                 sh 'cmake .'
                 sh 'make && make install'
-                sh 'popd'
+                sh 'cd ..'
 
                 // Install Qt Specific dependencies
                 sh 'apt-get -y -qq install \
@@ -59,15 +59,15 @@ pipeline {
         stage('Build the Project') {
             steps {
                 sh 'cmake -DCMAKE_BUILD_TYPE=Release -B build .'
-                sh 'pushd build'
+                sh 'cd build'
                 sh 'make -j4 && make install' // 4 jobs at once
-                sh 'popd'
+                sh 'cd ..'
             }
         }
 
         stage('Build packaging tools') {
             steps {
-                sh 'pushd bin'
+                sh 'cd bin'
 
                 // Get LinuxDeploy
                 sh 'wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage'
@@ -90,7 +90,7 @@ pipeline {
                 sh './linuxdeploy-x86_64.AppImage --appimage-extract-and-run --appdir AppDir -e ImageProcessing -i QIPAT.png -d QIPAT.desktop --plugin qt --output appimage' // appimage-extract-and-run : because we are in a docker container
                 sh 'ls'
                 sh 'mv QIPAT*.AppImage QIPAT.AppImage'
-                sh 'popd'
+                sh 'cd ..'
             }
         }
     }
