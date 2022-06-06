@@ -1,4 +1,9 @@
 pipeline {
+
+    environment {
+        GITHUB_TOKEN = credentials('github-token')
+    }
+
     agent { docker { 
         image 'ubuntu:22.04' 
         args '-u root:root -e QMAKE=/usr/bin/qmake6'
@@ -8,9 +13,7 @@ pipeline {
         skipStagesAfterUnstable()
     }
 
-    environment {
-        GITHUB_TOKEN = credentials('github-token')
-    }
+
 
     stages {
 
@@ -32,6 +35,7 @@ pipeline {
                 appstream \
                 hicolor-icon-theme \
                 openssl \
+                curl \
                 ca-certificates wget'
             }
         }
@@ -72,12 +76,9 @@ pipeline {
 
         stage('Build the Project') {
             steps {
-                sh 'pwd'
-                sh 'ls'
                 sh 'cmake -DCMAKE_BUILD_TYPE=Release -B buildapp .'
                 sh 'ls'
                 dir('buildapp') {
-                    sh 'ls'
                     sh 'make -j4 && make install' // 4 jobs at once
                 }
             }
@@ -111,10 +112,17 @@ pipeline {
                     sh 'mv QIPAT*.AppImage QIPAT.AppImage'
                 }
 
-                sh 'tar --exclude="img" --exclude="buildapp" -czvf QIPAT.tar.gz  $(ls -A)'
-                sh 'zip -r QIPAT.zip . -x img\* -x buildapp\* -x QIPAT.tar.gz\*'
+            }
+        }
 
-                sh 'ls'
+        stage("Upload To Github") {
+            sh 'curl -X POST -H "Authorization: token $GITHUB_TOKEN" --data "{\"tag_name\": \"v0.1.0\", \"name\": \"continuous\", \"body\": \"CICD Release\", \"draft\": false, \"prerelease\": true}" https://api.github.com/repos/ramizouari/QIPAT/releases > response'
+            sh 'cat response | sed -n -e \'s/"id":\ \([0-9]\+\),/\1/p\' | head -n 1 | sed \'s/[[:blank:]]//g\' | tee id'
+            sh 'curl -X POST -H "Authorization:token $GITHUB_TOKEN" -H "Content-Type:application/octet-stream" --data-binary QIPAT.AppImage https://uploads.github.com/repos/ramizouari/QIPAT/releases/68737653/assets?name=QIPAT.AppImage'
+        }
+
+        stage("Clean Everything") {
+            steps {
                 sh 'rm -rf *'
             }
         }
