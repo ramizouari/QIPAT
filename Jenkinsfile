@@ -126,7 +126,7 @@ pipeline {
                 sh 'chmod a+x cicd/upload-github.sh'
                 sh 'mv cicd/upload-github.sh bin/' 
                 dir('bin') {
-                    sh './upload-github.sh $GITHUB_TOKEN QIPAT.AppImage ../tag ../changelog'
+                    sh './github-upload.sh $GITHUB_TOKEN QIPAT.AppImage ../tag ../changelog'
                 }
             }
         }
