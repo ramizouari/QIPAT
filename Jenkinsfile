@@ -7,6 +7,11 @@ pipeline {
     options {
         skipStagesAfterUnstable()
     }
+
+    environment {
+        GITHUB_TOKEN = credentials('github-token')
+    }
+
     stages {
 
         stage('Install Dependencies') {
@@ -48,6 +53,8 @@ pipeline {
                     sh 'cmake .'
                     sh 'make && make install'
                 }
+                sh 'rm -r v2.3.3-1.tar.gz'
+                sh 'rm -r muparser-2.3.3-1'
 
                 // Install Qt Specific dependencies
                 sh 'apt-get -y -qq install \
@@ -57,13 +64,19 @@ pipeline {
             }
         }
 
+        stage('Create Source Package') {
+            steps {
+
+            }
+        }
+
         stage('Build the Project') {
             steps {
                 sh 'pwd'
                 sh 'ls'
-                sh 'cmake -DCMAKE_BUILD_TYPE=Release -B build-app .'
+                sh 'cmake -DCMAKE_BUILD_TYPE=Release -B buildapp .'
                 sh 'ls'
-                dir('build-app') {
+                dir('buildapp') {
                     sh 'ls'
                     sh 'make -j4 && make install' // 4 jobs at once
                 }
@@ -97,6 +110,11 @@ pipeline {
                     sh 'ls'
                     sh 'mv QIPAT*.AppImage QIPAT.AppImage'
                 }
+
+                sh 'tar --exclude="img" --exclude="buildapp" -czvf QIPAT.tar.gz  $(ls -A)'
+                sh 'zip -r QIPAT.zip . -x img\* -x buildapp\* -x QIPAT.tar.gz\*'
+
+                sh 'ls'
                 sh 'rm -rf *'
             }
         }
