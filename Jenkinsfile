@@ -43,10 +43,11 @@ pipeline {
                 // Build muparser
                 sh 'wget https://github.com/beltoforion/muparser/archive/refs/tags/v2.3.3-1.tar.gz'
                 sh 'tar -xvf v2.3.3-1.tar.gz'
-                sh 'cd muparser-2.3.3-1'
-                sh 'cmake .'
-                sh 'make && make install'
-                sh 'cd ..'
+
+                dir('muparser-2.3.3-1') {
+                    sh 'cmake .'
+                    sh 'make && make install'
+                }
 
                 // Install Qt Specific dependencies
                 sh 'apt-get -y -qq install \
@@ -59,38 +60,39 @@ pipeline {
         stage('Build the Project') {
             steps {
                 sh 'cmake -DCMAKE_BUILD_TYPE=Release -B build .'
-                sh 'cd build'
-                sh 'make -j4 && make install' // 4 jobs at once
-                sh 'cd ..'
+                dir('build') {
+                    sh 'make -j4 && make install' // 4 jobs at once
+                }
             }
         }
 
         stage('Build packaging tools') {
             steps {
-                sh 'cd bin'
+                dir('bin') {
+                    // Get LinuxDeploy
+                    sh 'wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage'
+                    sh 'chmod a+x linuxdeploy-x86_64.AppImage'
 
-                // Get LinuxDeploy
-                sh 'wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage'
-                sh 'chmod a+x linuxdeploy-x86_64.AppImage'
-
-                // Get LinuxDeploy-Qt-Plugin && Extract binary
-                sh 'wget https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage'
-                sh 'chmod a+x linuxdeploy-plugin-qt-x86_64.AppImage'
-                sh './linuxdeploy-plugin-qt-x86_64.AppImage --appimage-extract'
-                sh 'mv squashfs-root/usr/bin/linuxdeploy-plugin-qt .'
-                sh 'rm linuxdeploy-plugin-qt-x86_64.AppImage' // Avoid conflicts with extracted binary
+                    // Get LinuxDeploy-Qt-Plugin && Extract binary
+                    sh 'wget https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage'
+                    sh 'chmod a+x linuxdeploy-plugin-qt-x86_64.AppImage'
+                    sh './linuxdeploy-plugin-qt-x86_64.AppImage --appimage-extract'
+                    sh 'mv squashfs-root/usr/bin/linuxdeploy-plugin-qt .'
+                    sh 'rm linuxdeploy-plugin-qt-x86_64.AppImage' // Avoid conflicts with extracted binary
+                }
             }
         }
 
         stage("Package the Project") {
             steps {
-                sh 'mv ../resources/* .'
-                sh 'mkdir AppDir'
-                sh 'export QMAKE=/usr/bin/qmake6' // Needed by linux deploy
-                sh './linuxdeploy-x86_64.AppImage --appimage-extract-and-run --appdir AppDir -e ImageProcessing -i QIPAT.png -d QIPAT.desktop --plugin qt --output appimage' // appimage-extract-and-run : because we are in a docker container
-                sh 'ls'
-                sh 'mv QIPAT*.AppImage QIPAT.AppImage'
-                sh 'cd ..'
+                dir('bin') {
+                    sh 'mv ../resources/* .'
+                    sh 'mkdir AppDir'
+                    sh 'export QMAKE=/usr/bin/qmake6' // Needed by linux deploy
+                    sh './linuxdeploy-x86_64.AppImage --appimage-extract-and-run --appdir AppDir -e ImageProcessing -i QIPAT.png -d QIPAT.desktop --plugin qt --output appimage' // appimage-extract-and-run : because we are in a docker container
+                    sh 'ls'
+                    sh 'mv QIPAT*.AppImage QIPAT.AppImage'
+                }
             }
         }
     }
