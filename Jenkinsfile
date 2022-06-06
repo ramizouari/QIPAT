@@ -59,7 +59,8 @@ pipeline {
 
         stage('Build the Project') {
             steps {
-                sh 'cmake -DCMAKE_BUILD_TYPE=Release -B build .'
+                sh 'ls'
+                sh 'cmake -DCMAKE_BUILD_TYPE=Release -B ./build .'
                 dir('build') {
                     sh 'make -j4 && make install' // 4 jobs at once
                 }
