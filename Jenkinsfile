@@ -108,23 +108,25 @@ pipeline {
             }
         }
 
-        stage("Upload To Github") {
-            steps{
-                sh 'chmod a+x cicd/github-upload.sh'
-                sh 'mv cicd/github-upload.sh bin/' 
-                dir('bin') {
-                    sh "./github-upload.sh $GITHUB_TOKEN QIPAT.AppImage ../tag"
-                }
-            }
-        }
-
         stage("Get New Tag") {
             steps {
                 // Install Java with minimal dependencies
                 sh 'apt-get -y -qq install openjdk-8-jre-headless'
 
                 sh 'wget https://repo1.maven.org/maven2/se/bjurr/gitchangelog/git-changelog-command-line/1.100.2/git-changelog-command-line-1.100.2.jar'
-                sh 'java -jar git-changelog-command-line-1.100.2.jar --print-next-version > tag'
+                sh 'java -jar git-changelog-command-line-1.100.2.jar --print-next-version | tee tag'
+            }
+        }
+
+        stage("Upload To Github") {
+            steps{
+                sh 'chmod a+x cicd/github-upload.sh'
+                sh 'mv cicd/github-upload.sh bin/' 
+
+                dir('bin') {
+                    sh "ls"
+                    sh "./github-upload.sh $GITHUB_TOKEN QIPAT.AppImage ../tag"
+                }
             }
         }
 
