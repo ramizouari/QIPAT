@@ -21,7 +21,7 @@ EOF
 }
 
 # Create & Get The Id of the Release
-curl -X POST -H "Authorization: token $token" --data "$(release_data)" https://api.github.com/repos/ramizouari/QIPAT/releases
+id=$(curl -X POST -H "Authorization: token $token" --data "$(release_data)" https://api.github.com/repos/ramizouari/QIPAT/releases | jq .id)
 
 
 # Upload the Artifact
