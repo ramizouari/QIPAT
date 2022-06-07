@@ -26,6 +26,9 @@ constexpr real err=1e-6;
 
 BOOST_AUTO_TEST_SUITE(test_norms)
     BOOST_FIXTURE_TEST_SUITE(real_norms,points_fixture)
+    /*
+     * Unit test of L1 norm over a real vector space
+     * */
         BOOST_AUTO_TEST_SUITE(L1)
             BOOST_AUTO_TEST_CASE_TEMPLATE(distance,dimension,dimensions)
             {
@@ -50,6 +53,9 @@ BOOST_AUTO_TEST_SUITE(test_norms)
                 BOOST_CHECK_CLOSE(norm.distance(v1,v2),dimension,err);
             }
         BOOST_AUTO_TEST_SUITE_END()
+            /*
+     * Unit test of L2 norm over a real vector space
+     * */
         BOOST_AUTO_TEST_SUITE(L2)
             BOOST_AUTO_TEST_CASE_TEMPLATE(distance,dimension,dimensions)
             {
@@ -75,6 +81,9 @@ BOOST_AUTO_TEST_SUITE(test_norms)
             }
 
         BOOST_AUTO_TEST_SUITE_END()
+            /*
+             * Unit test of L infinity norm over a real vector space
+             */
         BOOST_AUTO_TEST_SUITE(Linf)
             BOOST_AUTO_TEST_CASE_TEMPLATE(distance,dimension,dimensions)
             {
@@ -103,6 +112,9 @@ BOOST_AUTO_TEST_SUITE(test_norms)
     BOOST_AUTO_TEST_SUITE_END()
 
     BOOST_FIXTURE_TEST_SUITE(complex_norms,points_fixture)
+        /*
+         * Unit test of L1 norm over a complex vector space
+         * */
         BOOST_AUTO_TEST_SUITE(L1)
             BOOST_AUTO_TEST_CASE_TEMPLATE(distance,dimension,complex_dimensions)
             {
@@ -127,6 +139,9 @@ BOOST_AUTO_TEST_SUITE(test_norms)
                 BOOST_CHECK_CLOSE(norm.distance(v1,v2),dimension,err);
             }
         BOOST_AUTO_TEST_SUITE_END()
+            /*
+             * Unit test of L2 norm over a complex vector space
+             * */
         BOOST_AUTO_TEST_SUITE(L2)
             BOOST_AUTO_TEST_CASE_TEMPLATE(distance,dimension,complex_dimensions)
             {
@@ -181,6 +196,9 @@ BOOST_AUTO_TEST_SUITE(test_norms)
 BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE(test_inner_products)
+    /*
+     * Unit test of standard inner product over an euclidean space
+     * */
     BOOST_AUTO_TEST_CASE_TEMPLATE(inner_product_real,dimension,dimensions)
     {
         s_vector<real,dimension::value> v1,v2;
@@ -193,6 +211,7 @@ BOOST_AUTO_TEST_SUITE(test_inner_products)
         auto &N=dimension::value;
         BOOST_CHECK_CLOSE(norm.inner_product(v1,v2),N*(N-1)*(2*N-1)/6,err);
     }
+
 
     BOOST_AUTO_TEST_CASE_TEMPLATE(inner_product_real_random,dimension,dimensions)
     {
@@ -211,6 +230,9 @@ BOOST_AUTO_TEST_SUITE(test_inner_products)
         BOOST_CHECK_CLOSE(norm.inner_product(v1,v2),V,err);
     }
 
+    /*
+     * Unit test of standard inner product over a complex space
+     * */
     BOOST_AUTO_TEST_CASE_TEMPLATE(inner_product_complex,dimension,dimensions)
     {
         s_vector<IC,dimension::value> v1,v2;
@@ -218,7 +240,7 @@ BOOST_AUTO_TEST_SUITE(test_inner_products)
         using namespace std::complex_literals;
         for(int i=0;i<dimension::value;++i)
         {
-            v1[i]=static_cast<real>(i)*1.Li;
+            v1[i].imag(static_cast<real>(i));
             v2[i]=-v1[i];
         }
         auto &N=dimension::value;
@@ -236,8 +258,8 @@ BOOST_AUTO_TEST_SUITE(test_inner_products)
         L2_inner_product<IC,s_vector<IC,dimension::value>> norm;
         for(int i=0;i<dimension::value;++i)
         {
-            v1[i]=d(rng)+1.Li*d(rng);
-            v2[i]=d(rng)+1.Li*d(rng);
+            v1[i]=IC{d(rng),d(rng)};
+            v2[i]=IC{d(rng),d(rng)};
         }
         auto &N=dimension::value;
         auto V1=norm.inner_product(v1,v2);
