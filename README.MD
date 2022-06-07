@@ -1,4 +1,4 @@
-# Image Processing and Analysis Toolkit : QIPAT
+# Qt Image Processing and Analysis Toolkit : QIPAT
 
 This is an image processing application & library built using **C++** and **Qt**.<br>
 It contains  set of the most common image processing algorithms and techniques, which are written with an emphasis on speed.<br>
