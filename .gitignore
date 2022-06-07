@@ -2,3 +2,5 @@ cmake-*
 .idea*
 .vscode
 bin
+tag
+changelog
