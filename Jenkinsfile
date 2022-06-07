@@ -113,9 +113,7 @@ pipeline {
             steps {
                 // Install npm & node
                 sh 'apt-get -y -qq install nodejs npm'
-                sh 'npm install git-changelog-command-line'
-                sh 'git config --global --add safe.directory .'
-                sh 'git fetch --all --tags'
+                sh 'npm install -g git-changelog-command-line'
                 sh 'npx git-changelog-command-line --print-next-version > tag'
             }
         }
