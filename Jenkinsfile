@@ -129,10 +129,10 @@ pipeline {
         //     }
         // }
 
-        // stage("Clean Everything") {
-        //     steps {
-        //         sh 'rm -rf *'
-        //     }
-        // }
+        stage("Clean Everything") {
+            steps {
+                sh 'rm -rf *'
+            }
+        }
     }
 }
