@@ -2,6 +2,22 @@
 
 QIPAT is an image processing application which was written using Qt. The basic image operations are written from scratch so we had to implement and test entire low-level and high-level modules.
 
+The Low level modules, which are crucial to many image processing algorithms are:
+
+- Algebra Module
+- Data Structures module
+- Linear Algebra module
+- Number Theory module
+- Polynomial module
+- Topology module
+
+
+
+For high level modules, there are:
+
+- ImageCore, which defines the basic image image type and many image processing algorithms
+- ImageGUI, which defines the Graphical User Interface
+
 ## 1.  Unit Tests (Using  Boost.Test)
 
 ### 1.1 Algebra Module
