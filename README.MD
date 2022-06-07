@@ -101,11 +101,14 @@ In this stage we run the different tests. For simplicity we will save the result
 
 We start by getting the necessary packaging tools. We then package our main application. We add the necessary libraries and Qt plugins and then bundle them into one **AppImage**.
 
-### Tag
+#### Tag
 
 We use `git-changelog-command-line` to get the newest tag. This tool uses `Conventional Commits` to determine the new tag value. More information on `conventional commits` [here](https://www.conventionalcommits.org/)
 
-### Release 
+#### Release 
 
 Finally, We create our `Github Release`, Tag the  release and upload the binary.
 
+### Pipeline Results
+
+![Results](./resources/pipeline-results.png)
