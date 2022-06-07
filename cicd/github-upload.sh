@@ -3,10 +3,9 @@
 token=$1
 artifact=$2
 tag=$(cat $3)
-# changelog=$(cat $4)
+changelog=$(cat $4)
 
-# changelog_cleaned="${changelog//$'\n'/'\n'}" # Transform Line Break to \n ( otherwise not valid JSON )
-# "body": "$changelog_cleaned",
+changelog_cleaned="${changelog//$'\n'/'\n'}" # Transform Line Break to \n ( otherwise not valid JSON )
 
 # Data Used to Create the release
 function release_data() {
@@ -14,6 +13,7 @@ cat <<EOF
 {
   "tag_name": "v$tag",
   "name": "v$tag",
+  "body": "$changelog_cleaned",
   "generate_release_notes": true,
   "draft": false,
   "prerelease": true
