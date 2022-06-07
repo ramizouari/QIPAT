@@ -15,6 +15,8 @@ namespace GUI::options {
         statusBar = new QStatusBar(this);
         layout = new QFormLayout;
         mainLayout->addLayout(layout);
+        dialogButtonBox->button(QDialogButtonBox::Ok)->setText("Apply");
+        dialogButtonBox->button(QDialogButtonBox::Ok)->setDefault(true);
         connect(dialogButtonBox, &QDialogButtonBox::accepted, this, &FilterDialog::accept);
         connect(dialogButtonBox, &QDialogButtonBox::rejected, this, &FilterDialog::reject);
     }

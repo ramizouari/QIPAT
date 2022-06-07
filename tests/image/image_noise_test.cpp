@@ -99,6 +99,7 @@ BOOST_AUTO_TEST_SUITE(image_noise)
             BOOST_FIXTURE_TEST_CASE(gaussian, sample_image_fixture<1>)
             {
                 constexpr double std=15;
+                BOOST_TEST_MESSAGE("Gaussian noise test on grey image, with std=" << std << " and eps=" << eps);
                 image::noise::GaussianNoise noise(0,std,0);
                 auto &I= *image;
                 I.max=1e6;
@@ -126,6 +127,7 @@ BOOST_AUTO_TEST_SUITE(image_noise)
             constexpr double p=0.1;
             auto &I= *image;
             I.max=1e6;
+            BOOST_TEST_MESSAGE("Impulse noise test on grey image, with p=" << p << " and eps=" << eps);
             image::noise::ImpulsiveNoise noise(0.1);
             int impulseCount=0;
             noise.apply(I);
@@ -144,6 +146,7 @@ BOOST_AUTO_TEST_SUITE(image_noise)
             image::noise::SpeckleNoise noise(std);
             auto &I= *image;
             I.max=1e6;
+            BOOST_TEST_MESSAGE("Speckle noise test, with std=" << std << " and eps=" << eps);
             auto J=I;
             noise.apply(J);
             Real Xi=0;
@@ -170,6 +173,7 @@ BOOST_AUTO_TEST_SUITE(image_noise)
         {
             constexpr double std=15;
             constexpr int stdCount=10;
+            BOOST_TEST_MESSAGE("Gaussian noise test on rgb image, with std=" << std << " and eps=" << eps);
             image::noise::GaussianNoise noise(0,std,0);
             auto &I= *image;
             I.max=1e6;

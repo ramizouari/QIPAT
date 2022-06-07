@@ -298,29 +298,7 @@ namespace GUI {
     void MainWindow::addLaplacianFilter()
     {
         options::FilterDialog dialog(this);
-        auto paddingInput = dialog.createPaddingInput();
-        auto grayFilterInput = dialog.createGrayFilterInput();
-        auto thresholdInput=new QSpinBox(&dialog);
-        dialog.addWidget("Threshold: ",thresholdInput);
-        thresholdInput->setRange(0,255);
-        thresholdInput->setValue(70);
-        auto includeDiagonalCheckBox = new QCheckBox("Include Diagonal",&dialog);
-        includeDiagonalCheckBox->setChecked(false);
-        dialog.addWidget(includeDiagonalCheckBox);
-        dialog.finalize();
-        connect(&dialog, &QDialog::accepted, [=]() {
-            image::filter::edge::LaplacianFilter filter(options::GrayFilterInput::getGrayFilter(grayFilterInput->currentIndex()),thresholdInput->value(),
-                                                        includeDiagonalCheckBox->isChecked());
-            std::unique_ptr<image::Padding> padding=options::PaddingInput::getPadding(paddingInput->currentIndex(),*imageLabel->getData());
-            image::Image oldImage=*imageLabel->getData();
-            if(padding)
-                *imageLabel->getData() = std::move(filter.apply(*padding));
-            else
-                *imageLabel->getData() = std::move(filter.apply(*imageLabel->getData()));
-            imageInformationBar->update(*imageLabel->getData());
-            imageLabel->updateQImage();
-        });
-        dialog.exec();
+        addLaplacianFilterPrivate(&dialog);
     }
 
     void MainWindow::about() {
@@ -424,32 +402,7 @@ The application is developped by:
     void MainWindow::otsuSegmentation()
     {
         options::FilterDialog dialog(this);
-        auto spinBox=dynamic_cast<QSpinBox*>(dialog.addWidget("Number of clutsers: ",new QSpinBox(&dialog)));
-        auto checkBox = dynamic_cast<QCheckBox*>(dialog.addWidget(new QCheckBox(this)));
-        checkBox->setText("Output binary image");
-        spinBox->setRange(2,20);
-        spinBox->setValue(2);
-        dialog.finalize();
-        connect(spinBox,&QSpinBox::valueChanged,[checkBox](int val)
-        {
-            checkBox->setEnabled(val==2);
-        });
-        connect(&dialog,&QInputDialog::accepted,[spinBox,checkBox,this]()
-        {
-            if(checkBox->isChecked())
-            {
-                image::segmentation::OtsuSegmentation otsu;
-                *imageLabel->getData() = std::move(otsu.apply(*imageLabel->getData()));
-            }
-            else
-            {
-                image::segmentation::IterativeOtsuSegmentation otsu(spinBox->value());
-                *imageLabel->getData() = std::move(otsu.apply(*imageLabel->getData()));
-            }
-            imageInformationBar->update(*imageLabel->getData());
-            imageLabel->updateQImage();
-        });
-        dialog.exec();
+        otsuSegmentationPrivate(&dialog);
     }
 
     void MainWindow::grayFilter() {
@@ -685,6 +638,68 @@ The application is developped by:
         saveToFile(path);
         updateSelectedFile(path);
         return path;
+
+    }
+
+    void MainWindow::addLaplacianFilterPrivate(options::FilterDialog *dialog) {
+        auto paddingInput = dialog->createPaddingInput();
+        paddingInput->setObjectName("padding");
+        auto grayFilterInput = dialog->createGrayFilterInput();
+        grayFilterInput->setObjectName("gray");
+        auto thresholdInput=new QSpinBox(dialog);
+        thresholdInput->setObjectName("threshold");
+        dialog->addWidget("Threshold: ",thresholdInput);
+        thresholdInput->setRange(0,255);
+        thresholdInput->setValue(70);
+        auto includeDiagonalCheckBox = new QCheckBox("Include Diagonal",dialog);
+        includeDiagonalCheckBox->setChecked(false);
+        dialog->addWidget(includeDiagonalCheckBox);
+        dialog->finalize();
+        connect(dialog, &QDialog::accepted, [=]() {
+            image::filter::edge::LaplacianFilter filter(options::GrayFilterInput::getGrayFilter(grayFilterInput->currentIndex()),thresholdInput->value(),
+                                                        includeDiagonalCheckBox->isChecked());
+            std::unique_ptr<image::Padding> padding=options::PaddingInput::getPadding(paddingInput->currentIndex(),*imageLabel->getData());
+            image::Image oldImage=*imageLabel->getData();
+            if(padding)
+                *imageLabel->getData() = std::move(filter.apply(*padding));
+            else
+                *imageLabel->getData() = std::move(filter.apply(*imageLabel->getData()));
+            imageInformationBar->update(*imageLabel->getData());
+            imageLabel->updateQImage();
+        });
+        dialog->exec();
+    }
+
+    void MainWindow::otsuSegmentationPrivate(options::FilterDialog *dialog)
+    {
+        auto spinBox=dynamic_cast<QSpinBox*>(dialog->addWidget("Number of clutsers: ",new QSpinBox(dialog)));
+        spinBox->setObjectName("clusters");
+        auto checkBox = dynamic_cast<QCheckBox*>(dialog->addWidget(new QCheckBox(this)));
+        checkBox->setObjectName("binarise");
+        checkBox->setText("Output binary image");
+        spinBox->setRange(2,20);
+        spinBox->setValue(2);
+        dialog->finalize();
+        connect(spinBox,&QSpinBox::valueChanged,[checkBox](int val)
+        {
+            checkBox->setEnabled(val==2);
+        });
+        connect(dialog,&QInputDialog::accepted,[spinBox,checkBox,this]()
+        {
+            if(checkBox->isChecked())
+            {
+                image::segmentation::OtsuSegmentation otsu;
+                *imageLabel->getData() = std::move(otsu.apply(*imageLabel->getData()));
+            }
+            else
+            {
+                image::segmentation::IterativeOtsuSegmentation otsu(spinBox->value());
+                *imageLabel->getData() = std::move(otsu.apply(*imageLabel->getData()));
+            }
+            imageInformationBar->update(*imageLabel->getData());
+            imageLabel->updateQImage();
+        });
+        dialog->exec();
 
     }
 

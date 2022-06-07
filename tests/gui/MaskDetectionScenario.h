@@ -9,7 +9,7 @@
 #define IMAGEPROCESSING_OTSUALGORITHMTEST_H
 
 
-class OtsuAlgorithmTest :public QObject {
+class MaskDetectionScenario : public QObject {
     Q_OBJECT
 private slots:
     void init();

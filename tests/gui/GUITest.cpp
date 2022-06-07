@@ -10,6 +10,7 @@
  * */
 #include "ImageViewTest.h"
 #include "NoiseReductionScenario.h"
+#include "MaskDetectionScenario.h"
 
 
 int main(int argc, char** argv)
@@ -21,7 +22,11 @@ int main(int argc, char** argv)
         status |= QTest::qExec(&tc, argc, argv);
     }
     {
-        NoiseReductionScenario tc;
+        //NoiseReductionScenario tc;
+        //status |= QTest::qExec(&tc, argc, argv);
+    }
+    {
+        MaskDetectionScenario tc;
         status |= QTest::qExec(&tc, argc, argv);
     }
     return status;

@@ -49,41 +49,45 @@ namespace GUI {
        ImageView *imageLabel,*bakImageLabel;
        ImageInformationBar* imageInformationBar;
 
-    private slots:
 
-       void showHistogram();
-       void showHistogramCurve();
-       void showSpectrum();
-       void openImage();
+    public slots:
+        void showHistogram();
+        void showHistogramCurve();
+        void showSpectrum();
+        void openImage();
+        void saveImage();
+        QString saveImageAs();
+        void addGaussianNoise();
+        void addSaltAndPepperNoise();
+        void addSpeckleNoise();
+        void addSobelFilter();
+        void addGaussianBlurFilter();
+        void addMedianFilter();
+        void addMeanBlurFilter();
+        void addBilateralFilter();
+        void addLaplacianFilter();
+        void addRobertsFilter();
+        void about();
+        void histogramEqualization();
+        void mapContrast();
+        void mapContrastSpline();
+        void addCustomConvolutionFilter();
+        void otsuSegmentation();
+        void grayFilter();
+        void addSpectralMask();
+        void addSpectralFilter();
+        void addErosion();
+        void addDilation();
+        void addOpening();
+        void addClosing();
+
+    private slots:
        void openImagePrivate(QFileDialog *dialog);
-       void saveImage();
-       QString saveImageAs();
        QString saveImageAsPrivate(QFileDialog *dialog);
-       void addGaussianNoise();
-       void addSaltAndPepperNoise();
        void addSaltAndPepperNoisePrivate(QInputDialog *dialog);
-       void addSpeckleNoise();
-       void addSobelFilter();
-       void addGaussianBlurFilter();
-       void addMedianFilter();
-       void addMedianFilterPrivate(options::FilterDialog* filterdialog);
-       void addMeanBlurFilter();
-       void addBilateralFilter();
-       void addLaplacianFilter();
-       void addRobertsFilter();
-       void about();
-       void histogramEqualization();
-       void mapContrast();
-       void mapContrastSpline();
-       void addCustomConvolutionFilter();
-       void otsuSegmentation();
-       void grayFilter();
-       void addSpectralMask();
-       void addSpectralFilter();
-       void addErosion();
-       void addDilation();
-       void addOpening();
-       void addClosing();
+       void addMedianFilterPrivate(options::FilterDialog* filterDialog);
+       void addLaplacianFilterPrivate(options::FilterDialog* filterDialog);
+       void otsuSegmentationPrivate(options::FilterDialog *dialog);
     };
 } // GUI
 

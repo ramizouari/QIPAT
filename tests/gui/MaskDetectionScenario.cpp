@@ -4,16 +4,18 @@
 
 #include <QTestAccessibility>
 #include <QtTestGui>
-#include "OtsuAlgorithmTest.h"
+#include "MaskDetectionScenario.h"
 #include "gui/mainwindow.h"
 #include "TestUtilities.h"
 #include <QTimer>
+#include <QSpinBox>
+#include <QCheckBox>
 
-void OtsuAlgorithmTest::cleanup() {
+void MaskDetectionScenario::cleanup() {
 
 }
 
-void OtsuAlgorithmTest::init() {
+void MaskDetectionScenario::init() {
     directory=QDir::current();
     bool result=directory.cd("img");
     if(!result)
@@ -28,7 +30,7 @@ void OtsuAlgorithmTest::init() {
     file.close();
 }
 
-void OtsuAlgorithmTest::completeTest()
+void MaskDetectionScenario::completeTest()
 {
     /*
      * Create main window
@@ -54,7 +56,7 @@ void OtsuAlgorithmTest::completeTest()
     {
         dialog.setOptions(QFileDialog::DontUseNativeDialog);
         dialog.setDirectory(directory);
-        dialog.selectFile("marbles.ppm");
+        dialog.selectFile("billCropped.ppm");
         QTimer::singleShot(5000ms, &dialog, [&dialog]{QTest::keyClick(&dialog,Qt::Key::Key_Enter);});
         window.openImagePrivate(&dialog);
         qApp->processEvents();
@@ -71,49 +73,77 @@ void OtsuAlgorithmTest::completeTest()
     QTest::qSleep(3000);
 
 /*
- * Add Noise to image
+ * Add Laplacian filter to image
  * */
-    QAction* saltAndPepperAction= Test::findAction(window.noiseMenu,"Salt and Pepper");
-    auto potentialSaltPepperActionMissing=Test::actionNotFound("Salt and Pepper").toStdString();
-    //Verify the existence of the action Salt and Pepper
-    QVERIFY2(saltAndPepperAction, potentialSaltPepperActionMissing.c_str());
-    //override salt and pepper dialog
-    saltAndPepperAction->disconnect();
-    QInputDialog noiseDialog(&window);
-    connect(saltAndPepperAction,&QAction::triggered,[&noiseDialog,&window]
+    QAction* laplacianAction= Test::findAction(window.filterMenu, "Laplacian");
+    auto potentialLaplacianActionMissing=Test::actionNotFound("Laplacian").toStdString();
+    //Verify the existence of the action Laplacian
+    QVERIFY2(laplacianAction, potentialLaplacianActionMissing.c_str());
+    //override laplacian dialog
+    laplacianAction->disconnect();
+    GUI::options::FilterDialog laplacianDialog(&window);
+    connect(laplacianAction, &QAction::triggered, [&laplacianDialog,&window]
     {
         QTest::qSleep(2000);
-        noiseDialog.setDoubleValue(probability);
         qApp->processEvents();
-        QTimer::singleShot(3000ms, &noiseDialog, [&noiseDialog]{QTest::keyClick(&noiseDialog, Qt::Key::Key_Enter);});
-        window.addSaltAndPepperNoisePrivate(&noiseDialog);
+        QTimer::singleShot(3000ms, &laplacianDialog, [&laplacianDialog]
+        {
+            auto grayFilter=laplacianDialog.findChildren<GUI::options::GrayFilterInput*>("gray");
+            auto thresholdFilter=laplacianDialog.findChildren<QSpinBox*>("threshold");
+            for(int i=0;i<5;i++)
+            {
+                thresholdFilter.first()->setValue(thresholdFilter.first()->value()+1);
+                qApp->processEvents();
+                QTest::qSleep(200);
+            }
+            QTest::mouseClick(thresholdFilter.first(),Qt::MouseButton::LeftButton);
+            QTest::qSleep(200);
+            for(int i=0;i<4;i++)
+            {
+                QTest::keyClick(grayFilter.first(),Qt::Key::Key_Down);
+                qApp->processEvents();
+                QTest::qSleep(200);
+            }
+            QTest::keyClick(grayFilter.first(),Qt::Key::Key_Enter);
+            qApp->processEvents();
+            QTest::qSleep(2000);
+            laplacianDialog.accept();
+        });
+        window.addLaplacianFilterPrivate(&laplacianDialog);
         qApp->processEvents();
     });
-    saltAndPepperAction->trigger();
+    laplacianAction->trigger();
     QTest::qSleep(1000);
 
 
-/*
- * Median Filter to image, to remove salt and pepper noise
+    /*
+ * Apply Otsu's segmentation algorithm
  * */
-    QAction* medianFilterAction = Test::findAction(window.filterMenu,"Median");
-    auto potentialMedianActionMissing=Test::actionNotFound("Median").toStdString();
-    //Verify the existence of the action open
-    QVERIFY2(medianFilterAction, potentialMedianActionMissing.c_str());
-    GUI::options::FilterDialog filterDialog;
-    //override median filter dialog
-    medianFilterAction->disconnect();
-    connect(medianFilterAction,&QAction::triggered,[&filterDialog,&window]
+    QAction* otsuAction= Test::findAction(window.editMenu, "Otsu");
+    auto potentialOtsuActionMissing=Test::actionNotFound("Otsu").toStdString();
+    //Verify the existence of the action Laplacian
+    QVERIFY2(otsuAction, potentialOtsuActionMissing.c_str());
+    //override laplacian dialog
+    otsuAction->disconnect();
+    GUI::options::FilterDialog otsuDialog(&window);
+
+    connect(otsuAction, &QAction::triggered, [&otsuDialog,&window]
     {
         QTest::qSleep(2000);
         qApp->processEvents();
-        QTimer::singleShot(3000ms, &filterDialog, [&filterDialog]{filterDialog.accept(); });
-        window.addMedianFilterPrivate(&filterDialog);
+        QTimer::singleShot(3000ms, &otsuDialog, [&otsuDialog]
+        {
+            auto binariseInput=otsuDialog.findChildren<QCheckBox*>("binarise");
+
+            QTest::mouseClick(binariseInput.first(), Qt::MouseButton::LeftButton);
+            qApp->processEvents();
+            QTest::qSleep(2000);
+            otsuDialog.accept();
+        });
+        window.otsuSegmentationPrivate(&otsuDialog);
         qApp->processEvents();
     });
-    medianFilterAction->trigger();
-    QTest::qSleep(5000);
-
-
+    otsuAction->trigger();
+    QTest::qSleep(2000);
 
 }

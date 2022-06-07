@@ -7,12 +7,7 @@
 #include <QtTest/QtTest>
 #include <QFileDialog>
 
-class FileDialog : public QFileDialog
-{
-public:
-    using QFileDialog::QFileDialog;
-    void accept() override;
-};
+
 
 class NoiseReductionScenario :public QObject
 {

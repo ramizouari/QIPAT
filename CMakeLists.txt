@@ -139,7 +139,7 @@ add_executable(AlgebraTest tests/algebra/abstract_algebra.cpp tests/print.h test
 add_executable(ImageCoreTest tests/image/basic_image_test.cpp ${CORE_SOURCES} tests/image/image_filters_test.cpp tests/image/image_noise_test.cpp)
 add_executable(ImageGUITest tests/gui/GUITest.cpp tests/gui/ImageViewTest.cpp tests/gui/ImageViewTest.h
         ${CORE_SOURCES} ${GUI_SOURCES}  ${PARSER_SOURCES} ${UTILITY_SOURCES}
-        tests/gui/NoiseReductionScenario.cpp tests/gui/NoiseReductionScenario.h)
+        tests/gui/NoiseReductionScenario.cpp tests/gui/NoiseReductionScenario.h tests/gui/MaskDetectionScenario.cpp tests/gui/MaskDetectionScenario.h tests/gui/TestUtilities.h tests/gui/TestUtilities.cpp)
 target_link_libraries (LinearAlgebraTest ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} )
 target_link_libraries (NumberTheoryTest ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
 target_link_libraries(PolynomialTest ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})

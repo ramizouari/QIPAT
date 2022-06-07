@@ -3,6 +3,7 @@
 //
 #define TEST_MODE
 #include "NoiseReductionScenario.h"
+#include "TestUtilities.h"
 #include "gui/mainwindow.h"
 #include <chrono>
 #include <QInputDialog>
@@ -11,18 +12,9 @@ constexpr double probability=0.05;
 using namespace std::chrono_literals;
 
 
-QAction* findActionOrThrow(QMenu *menu,const QString& actionName)
-{
-    for(auto action:menu->actions())
-        if(action->text()==actionName)
-            return action;
-    throw std::runtime_error("Requested Action " + actionName.toStdString() + " Not found");
-}
-
 
 void NoiseReductionScenario::completeTest()
 {
-
     /*
      * Create main window
      * */
@@ -31,15 +23,17 @@ void NoiseReductionScenario::completeTest()
     QTest::qSleep(1000);
     qApp->processEvents();
 
-
     /*
      * Open image
      * */
     QTest::qSleep(3000);
-    QAction *openAction= findActionOrThrow(window.fileMenu,"Open");
+    QAction *openAction= Test::findAction(window.fileMenu,"Open");
+    auto potentialOpenActionMissing=Test::actionNotFound("Open").toStdString();
+    //Verify the existence of the action open
+    QVERIFY2(openAction, potentialOpenActionMissing.c_str());
     //Override open image dialog
     openAction->disconnect();
-    FileDialog dialog(&window,"Test Open","");
+    Test::FileDialog dialog(&window,"Test Open","");
     connect(openAction,&QAction::triggered,[&dialog,&directory=this->directory,&window]
     {
         dialog.setOptions(QFileDialog::DontUseNativeDialog);
@@ -56,13 +50,17 @@ void NoiseReductionScenario::completeTest()
     openAction->trigger();
     QTest::qSleep(3000);
 
+
     qApp->processEvents();
     QTest::qSleep(3000);
 
 /*
  * Add Noise to image
  * */
-    QAction* saltAndPepperAction= findActionOrThrow(window.noiseMenu,"Salt and Pepper");
+    QAction* saltAndPepperAction= Test::findAction(window.noiseMenu,"Salt and Pepper");
+    auto potentialSaltPepperActionMissing=Test::actionNotFound("Salt and Pepper").toStdString();
+    //Verify the existence of the action Salt and Pepper
+    QVERIFY2(saltAndPepperAction, potentialSaltPepperActionMissing.c_str());
     //override salt and pepper dialog
     saltAndPepperAction->disconnect();
     QInputDialog noiseDialog(&window);
@@ -82,7 +80,10 @@ void NoiseReductionScenario::completeTest()
 /*
  * Median Filter to image, to remove salt and pepper noise
  * */
-    QAction* medianFilterAction = findActionOrThrow(window.filterMenu,"Median");
+    QAction* medianFilterAction = Test::findAction(window.filterMenu,"Median");
+    auto potentialMedianActionMissing=Test::actionNotFound("Median").toStdString();
+    //Verify the existence of the action open
+    QVERIFY2(medianFilterAction, potentialMedianActionMissing.c_str());
     GUI::options::FilterDialog filterDialog;
     //override median filter dialog
     medianFilterAction->disconnect();
@@ -101,8 +102,11 @@ void NoiseReductionScenario::completeTest()
 /*
  * Save image
  * */
-    QAction *saveAsAction= findActionOrThrow(window.fileMenu,"Save as");
-    FileDialog saveDialog(&window,"Test Save",directory.path());
+    QAction *saveAsAction= Test::findAction(window.fileMenu,"Save as");
+    auto potentialSaveAsActionMissing=Test::actionNotFound("Save as").toStdString();
+    //Verify the existence of the action open
+    QVERIFY2(saveAsAction, potentialSaveAsActionMissing.c_str());
+    Test::FileDialog saveDialog(&window,"Test Save",directory.path());
     //Override save image dialog
     saveAsAction->disconnect();
     QString saveFile;
@@ -148,10 +152,10 @@ void NoiseReductionScenario::init() {
     directory=QDir::current();
     bool result=directory.cd("img");
     if(!result)
-        throw std::runtime_error("Problem while starting test");
+        QFAIL("Folder img does not exist");
     result=directory.cd("P6");
     if(!result)
-        throw std::runtime_error("Problem while starting test");
+        QFAIL("Folder img/P6 does not exist");
 
     QFile::remove(directory.filePath("marbles-edit.ppm"));
     QFile file(directory.filePath("marbles-edit.ppm"));
@@ -164,7 +168,3 @@ void NoiseReductionScenario::cleanup()
     //QFile::remove(directory.filePath("marbles-edit.ppm"));
 }
 
-void FileDialog::accept() {
-    QFileDialog::accept();
-    close();
-}
