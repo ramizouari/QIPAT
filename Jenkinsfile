@@ -43,10 +43,10 @@ pipeline {
 
         stage("Get New Tag") {
             steps {
-                // Install npm & node
-                sh 'apt-get -y -qq install nodejs npm'
-                sh 'npm install -g git-changelog-command-line'
-                sh 'npx git-changelog-command-line --print-next-version > tag'
+                // Install Java with minimal dependencies
+                sh 'apt-get -y -qq install openjdk-8-jre-headless'
+                sh 'wget https://repo1.maven.org/maven2/se/bjurr/gitchangelog/git-changelog-command-line/1.100.2/git-changelog-command-line-1.100.2.jar'
+                sh 'java -jar git-changelog-command-line-1.100.2.jar --print-next-version > tag'
                 sh 'cat tag'
             }
         }
@@ -129,7 +129,10 @@ pipeline {
         //     }
         // }
 
-        stage("Clean Everything") {
+    }
+
+    post { 
+        always { 
             steps {
                 sh 'rm -rf *'
             }
