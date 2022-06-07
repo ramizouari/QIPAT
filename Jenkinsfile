@@ -72,7 +72,6 @@ pipeline {
         stage('Build the Project') {
             steps {
                 sh 'cmake -DCMAKE_BUILD_TYPE=Release -B buildapp .'
-                sh 'ls'
                 dir('buildapp') {
                     sh 'make -j4 && make install' // 4 jobs at once
                 }
@@ -123,10 +122,9 @@ pipeline {
             steps {
                 // Install Java with minimal dependencies
                 sh 'apt-get -y -qq install openjdk-8-jre-headless'
-                
+
                 sh 'wget https://repo1.maven.org/maven2/se/bjurr/gitchangelog/git-changelog-command-line/1.100.2/git-changelog-command-line-1.100.2.jar'
                 sh 'java -jar git-changelog-command-line-1.100.2.jar --print-next-version > tag'
-                sh 'cat tag'
             }
         }
 
