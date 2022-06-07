@@ -94,7 +94,7 @@ For high level modules, there are:
 
 - Gray and RGB image construction
 - Image reading from PGM,PPM and PBM formats
-- Image noise
+- Image noise, (a theoretical justification is also included)
 - mean filter and gaussian filter
 - Otsu's  segmentation algorithm
 
@@ -106,15 +106,6 @@ For high level modules, there are:
 
 - Median filter (as it uses the image module and the data structures module)
 - FFT (as it uses the number theory module and linear algebra module)
-- Testing Scenario $1$ of:
-  - Opening image
-  - Applying Salt and Pepper (Impulsive) noise
-  - Applying Median filter to reduce that noise
-  - Save the image
-- Testing Scenario $2$ of:
-  - Opening image
-  - Laplacian's algorithm for edge detection, with a gray filter and a threshold of $65$ 
-  - Applying otsu's segmentation algorithm
 
 ## 3. System Tests
 
@@ -122,6 +113,21 @@ For high level modules, there are:
 - Testing speed of polynomial FFT multiplication
 - Testing speed of median filter
 
-# 4. Acceptance Tests
+## 4. End to End Tests:
+
+### 4.1 Scenario 1:
+
+- Opening image `img/P6/marbles.ppm`
+- Applying Salt and Pepper (Impulsive) noise
+- Applying Median filter to reduce that noise
+- Save the image
+
+## 4.2 Scenario $2$:
+
+- Opening image `img/P3/billCropped.ppm`
+- Laplacian's algorithm for edge detection, with a gray filter and a threshold
+- Applying otsu's segmentation algorithm
+
+# 5. Acceptance Tests
 
 Found on the user acceptance word document
