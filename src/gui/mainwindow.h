@@ -13,6 +13,18 @@
 #include "gui/statusbar/ImageInformationBar.h"
 #include "imageview.h"
 #include "image/ImageWriter.h"
+#include "gui/options/FilterDialog.h"
+#include <QFileDialog>
+#include <QInputDialog>
+
+
+
+#ifdef TEST_MODE
+#define protected public
+#define private public
+constexpr bool isTestMode = true;
+#endif
+
 
 namespace GUI {
     QT_BEGIN_NAMESPACE
@@ -21,6 +33,8 @@ namespace GUI {
 
     class MainWindow : public QMainWindow {
     Q_OBJECT
+    const bool isTest=false;
+    explicit MainWindow(bool isTest, QWidget *parent = nullptr);
 
     public:
         explicit MainWindow(QWidget *parent = nullptr);
@@ -31,41 +45,55 @@ namespace GUI {
 
     private:
        // Ui::MainWindow *ui;
-        QMenu *fileMenu,*statsMenu,*editMenu,*aboutMenu,*viewMenu;
+        QMenu *fileMenu,*statsMenu,*editMenu,*aboutMenu,*viewMenu,*filterMenu,*noiseMenu;
        ImageView *imageLabel,*bakImageLabel;
        ImageInformationBar* imageInformationBar;
 
+
     public slots:
-       void showHistogram();
-       void showHistogramCurve();
-       void showSpectrum();
-       void openImage();
-       void saveImage();
-       void saveImageAs();
-       void addGaussianNoise();
-       void addSaltAndPepperNoise();
-       void addSpeckleNoise();
-       void addSobelFilter();
-       void addGaussianBlurFilter();
-       void addMedianFilter();
-       void addMeanBlurFilter();
-       void addBilateralFilter();
-       void addLaplacianFilter();
-       void addRobertsFilter();
-       void about();
-       void histogramEqualization();
-       void mapContrast();
-       void mapContrastSpline();
-       void addCustomConvolutionFilter();
-       void otsuSegmentation();
-       void grayFilter();
-       void addSpectralMask();
-       void addSpectralFilter();
-       void addErosion();
-       void addDilation();
-       void addOpening();
-       void addClosing();
+        void showHistogram();
+        void showHistogramCurve();
+        void showSpectrum();
+        void openImage();
+        void saveImage();
+        QString saveImageAs();
+        void addGaussianNoise();
+        void addSaltAndPepperNoise();
+        void addSpeckleNoise();
+        void addSobelFilter();
+        void addGaussianBlurFilter();
+        void addMedianFilter();
+        void addMeanBlurFilter();
+        void addBilateralFilter();
+        void addLaplacianFilter();
+        void addRobertsFilter();
+        void about();
+        void histogramEqualization();
+        void mapContrast();
+        void mapContrastSpline();
+        void addCustomConvolutionFilter();
+        void otsuSegmentation();
+        void grayFilter();
+        void addSpectralMask();
+        void addSpectralFilter();
+        void addErosion();
+        void addDilation();
+        void addOpening();
+        void addClosing();
+
+    private slots:
+       void openImagePrivate(QFileDialog *dialog);
+       QString saveImageAsPrivate(QFileDialog *dialog);
+       void addSaltAndPepperNoisePrivate(QInputDialog *dialog);
+       void addMedianFilterPrivate(options::FilterDialog* filterDialog);
+       void addLaplacianFilterPrivate(options::FilterDialog* filterDialog);
+       void otsuSegmentationPrivate(options::FilterDialog *dialog);
     };
 } // GUI
+
+#ifdef TEST_MODE
+#undef protected
+#undef private
+#endif
 
 #endif //IMAGEPROCESSING_MAINWINDOW_H

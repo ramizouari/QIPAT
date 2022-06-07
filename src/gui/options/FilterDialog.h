@@ -13,6 +13,11 @@
 #include "PaddingInput.h"
 #include "MatrixSheet.h"
 
+#ifdef TEST_MODE
+#define private public
+#define protected public
+#endif
+
 namespace GUI::options {
 
         class FilterDialog : public QDialog {
@@ -33,5 +38,10 @@ namespace GUI::options {
         };
 
     } // options
+
+#ifdef TEST_MODE
+#undef private
+#undef protected
+#endif
 
 #endif //IMAGEPROCESSING_FILTERDIALOG_H

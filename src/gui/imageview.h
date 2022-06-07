@@ -26,7 +26,6 @@ namespace GUI {
     class ImageView : public QScrollArea {
     Q_OBJECT
 
-
     public:
         explicit ImageView(QWidget *parent = nullptr);
 

@@ -63,6 +63,7 @@ BOOST_AUTO_TEST_SUITE(image_filters)
         BOOST_AUTO_TEST_SUITE(blur)
             BOOST_FIXTURE_TEST_CASE(mean, sample_image_fixture<1>)
             {
+                BOOST_TEST_MESSAGE("Testing mean blur filter on grey image");
                 constexpr int filter_size=3;
                 ZeroPadding padding(*image);
                 filter::MeanBlurFilter filter(filter_size);
@@ -80,6 +81,7 @@ BOOST_AUTO_TEST_SUITE(image_filters)
 
             BOOST_FIXTURE_TEST_CASE(median, sample_image_fixture<1>)
             {
+                BOOST_TEST_MESSAGE("Testing median filter on grey image");
                 constexpr int filter_size=5;
                 ZeroPadding padding(*image);
                 filter::MedianFilter filter(filter_size);
@@ -99,6 +101,7 @@ BOOST_AUTO_TEST_SUITE(image_filters)
 
             BOOST_FIXTURE_TEST_CASE(guassian, sample_image_fixture<1>)
             {
+                BOOST_TEST_MESSAGE("Testing guassian blur filter on grey image");
                 constexpr Real sigma=1;
                 constexpr int stdcount=2;
                 ZeroPadding padding(*image);
@@ -128,6 +131,7 @@ BOOST_AUTO_TEST_SUITE(image_filters)
         BOOST_AUTO_TEST_SUITE(threshold)
             BOOST_AUTO_TEST_CASE(otsu)
             {
+                BOOST_TEST_MESSAGE("Testing Otsu thresholding on grey image");
                 constexpr int width=6,height=6,maximum=5,exampleThreshold=3;
                 Image image({{0,0,1,4,4,5},{0,1,3,4,2,4},
                              {1,3,4,2,1,3},{4,4,3,1,0,0},
@@ -150,6 +154,7 @@ BOOST_AUTO_TEST_SUITE(image_filters)
         BOOST_AUTO_TEST_SUITE(blur)
             BOOST_AUTO_TEST_CASE(mean)
             {
+                BOOST_TEST_MESSAGE("Testing mean blur filter on rgb image");
                 constexpr int filter_size=3;
                 ZeroPadding padding(*image);
                 filter::MeanBlurFilter filter(filter_size);
@@ -161,12 +166,14 @@ BOOST_AUTO_TEST_SUITE(image_filters)
                             S+=formula(c,i+k,j+l,width,height);
                     return S/9.;
                 };
+                Real error=0;
                 for(int c=0;c<image->nb_channel;c++) for(int i=0;i<image->width;i++) for(int j=0;j<image->height;j++)
                             BOOST_CHECK_CLOSE(J(c,i,j),mean(c,i,j),epsilon);
             }
 
             BOOST_AUTO_TEST_CASE(median)
             {
+                BOOST_TEST_MESSAGE("Testing median filter on rgb image");
                 constexpr int filter_size=5;
                 ZeroPadding padding(*image);
                 filter::MedianFilter filter(filter_size);
@@ -186,6 +193,7 @@ BOOST_AUTO_TEST_SUITE(image_filters)
 
             BOOST_AUTO_TEST_CASE(guassian)
             {
+                BOOST_TEST_MESSAGE("Testing guassian blur filter on rgb image");
                 constexpr Real sigma=1;
                 constexpr int stdcount=2;
                 ZeroPadding padding(*image);

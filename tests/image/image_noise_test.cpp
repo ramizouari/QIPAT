@@ -96,15 +96,23 @@ std::pair<Real,Real> wilsonScoreInterval(int n,int sucess,Real confidence)
 
 BOOST_AUTO_TEST_SUITE(image_noise)
     BOOST_AUTO_TEST_SUITE(grey_image)
+    /*
+     * Unit Test for Gaussian Noise on grey image
+     * Theoretical Justification is given on the report
+     * */
             BOOST_FIXTURE_TEST_CASE(gaussian, sample_image_fixture<1>)
             {
+                //Given
                 constexpr double std=15;
+                BOOST_TEST_MESSAGE("Gaussian noise test on grey image, with std=" << std << " and eps=" << eps);
                 image::noise::GaussianNoise noise(0,std,0);
                 auto &I= *image;
                 I.max=1e6;
                 auto J=I;
-                noise.apply(J);
                 Real Xi=0;
+
+                //When
+                noise.apply(J);
                 for(int i=0;i<width;i++) for(int j=0;j<height;j++) for(int c=0;c<nb_channel;c++)
                 {
                     Real diff=J(c,i,j)-I(c,i,j);
@@ -114,40 +122,57 @@ BOOST_AUTO_TEST_SUITE(image_noise)
                 auto n=width*height*nb_channel;
                 auto r= RadiusUpperBound(n, 1 - likelihoodLimit, eps);
                 Real XiLower= n-r, XiUpper=n+r;
+
+                //Expected
                 if(Xi > XiLower && Xi < XiUpper)
                     BOOST_CHECK_MESSAGE(true,"Difference is consistent with the desired gaussian distribution");
                 else
                     BOOST_CHECK_MESSAGE(false,"Difference is not consistent with the desired gaussian distribution");
 
             }
-
+/*
+ * Unit Test for Impulsive Noise on grey image
+ * Based on Wilson's test
+ * */
         BOOST_FIXTURE_TEST_CASE(impulse, sample_image_fixture<1>)
         {
+                //Given
             constexpr double p=0.1;
             auto &I= *image;
             I.max=1e6;
+            BOOST_TEST_MESSAGE("Impulse noise test on grey image, with p=" << p << " and eps=" << eps);
             image::noise::ImpulsiveNoise noise(0.1);
             int impulseCount=0;
+
+            //When
             noise.apply(I);
             for(int c=0;c<nb_channel;c++) for(int i=0;i<width;i++) for(int j=0;j<height;j++) if(I(c,i,j)==0 || I(c,i,j)==I.max)
                 impulseCount++;
             auto [L,R] = wilsonScoreInterval(width*height*nb_channel,impulseCount,1-likelihoodLimit);
+            //Expected
             if(p > L && p < R)
                 BOOST_CHECK_MESSAGE(true,"Impulses are consistent with the desired binomial distribution");
             else
                 BOOST_CHECK_MESSAGE(false,"Impulses are not consistent with the desired binomial distribution");
         }
-
+        /*
+         * Unit Test for Speckle Noise on grey image
+         * Theoretical Justification is given on the report
+         * */
         BOOST_FIXTURE_TEST_CASE(speckle, sample_image_fixture<1>)
         {
+            //Given
             constexpr double std=0.4;
             image::noise::SpeckleNoise noise(std);
             auto &I= *image;
             I.max=1e6;
+            BOOST_TEST_MESSAGE("Speckle noise test, with std=" << std << " and eps=" << eps);
             auto J=I;
-            noise.apply(J);
             Real Xi=0;
             int n=0;
+            //When
+            noise.apply(J);
+
             for(int i=0;i<width;i++) for(int j=0;j<height;j++) for(int c=0;c<nb_channel;c++) if(I(c,i,j) > 0 && J(c,i,j) < I.max)
             {
                 n++;
@@ -157,6 +182,7 @@ BOOST_AUTO_TEST_SUITE(image_noise)
             Xi/=std*std;
             auto r= RadiusUpperBound(n, 1 - likelihoodLimit, eps);
             Real XiLower= n-r, XiUpper=n+r;
+            //Expect
             if(Xi > XiLower && Xi < XiUpper)
                 BOOST_CHECK_MESSAGE(true,"Ratio is consistent with the desired gaussian distribution");
             else
@@ -166,10 +192,15 @@ BOOST_AUTO_TEST_SUITE(image_noise)
 
     BOOST_AUTO_TEST_SUITE_END()
     BOOST_AUTO_TEST_SUITE(rgb_image)
+
+    /* Unit test for Gaussian Noise on RGB image
+     * Theoretical Justification is given on the report
+     * */
         BOOST_FIXTURE_TEST_CASE(gaussian, sample_image_fixture<1>)
         {
             constexpr double std=15;
             constexpr int stdCount=10;
+            BOOST_TEST_MESSAGE("Gaussian noise test on rgb image, with std=" << std << " and eps=" << eps);
             image::noise::GaussianNoise noise(0,std,0);
             auto &I= *image;
             I.max=1e6;
@@ -192,6 +223,9 @@ BOOST_AUTO_TEST_SUITE(image_noise)
 
         }
 
+        /* Unit test for Impulsive Noise on RGB image
+         * Based on Wilson's test
+         * */
         BOOST_FIXTURE_TEST_CASE(impulse, sample_image_fixture<3>)
         {
             constexpr double p=0.1;
@@ -209,6 +243,9 @@ BOOST_AUTO_TEST_SUITE(image_noise)
                 BOOST_CHECK_MESSAGE(false,"Impulses are not consistent with the desired binomial distribution");
         }
 
+        /* Unit test for Speckle Noise on RGB image
+         * Theoretical Justification is given on the report
+         * */
 
         BOOST_FIXTURE_TEST_CASE(speckle, sample_image_fixture<3>)
         {

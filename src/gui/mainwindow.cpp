@@ -51,9 +51,8 @@
 #include "gui/options/SpectrumFilterDialog.h"
 
 namespace GUI {
-    MainWindow::MainWindow(QWidget *parent) :
-            QMainWindow(parent) {
 
+    MainWindow::MainWindow(bool isTest,QWidget *parent): QMainWindow(parent),isTest(isTest) {
         imageLabel = new ImageView(this);
 
         fileMenu = new QMenu("File", this);
@@ -65,13 +64,13 @@ namespace GUI {
         menuBar()->addMenu(fileMenu);
 
         editMenu = new QMenu("Edit", this);
-        auto noiseMenu = editMenu->addMenu("Noise");
+        noiseMenu = editMenu->addMenu("Noise");
         auto gaussianNoiseAction=noiseMenu->addAction("Gaussian", this, &MainWindow::addGaussianNoise);
         auto saltAndPepperNoiseAction=noiseMenu->addAction("Salt and Pepper", this, &MainWindow::addSaltAndPepperNoise);
         auto speckleNoiseAction=noiseMenu->addAction("Speckle", this, &MainWindow::addSpeckleNoise);
 
         menuBar()->addMenu(editMenu);
-        auto filterMenu = editMenu->addMenu("Filter");
+        filterMenu = editMenu->addMenu("Filter");
         auto medianFilterAction=filterMenu->addAction("Median", this, &MainWindow::addMedianFilter);
         auto meanFilterAction=filterMenu->addAction("Mean", this, &MainWindow::addMeanBlurFilter);
         auto gaussianFilterAction=filterMenu->addAction("Gaussian", this, &MainWindow::addGaussianBlurFilter);
@@ -120,6 +119,12 @@ namespace GUI {
         statusBar()->addPermanentWidget(imageInformationBar);
     }
 
+    MainWindow::MainWindow(QWidget *parent) :
+            MainWindow(false,parent) {
+
+
+    }
+
     MainWindow::~MainWindow() {
     }
 
@@ -134,80 +139,15 @@ namespace GUI {
         dialog->exec();
     }
 
-    void MainWindow::openImage() {
-        QFileDialog dialog(this);
-        dialog.setFileMode(QFileDialog::ExistingFile);
-        dialog.setNameFilter(tr("Images (*.pbm *.pgm *.ppm)"));
-        dialog.setModal(true);
-        dialog.setFocus();
-        dialog.open();
-
-        if (dialog.exec() != QDialog::Accepted)
-            return;
-
-        auto fileName = dialog.selectedFiles().first();
-        if (fileName.isEmpty()) {
-            return;
-        }
-        updateSelectedFile(fileName);
-        image::PNMReader reader;
-        imageLabel->openImage(new image::Image(reader.read(fileName.toStdString())));
-//        std::stringstream stream;
-//        stream << "Image: " << fileName.toStdString() << " (" << imageLabel->getData()->width << "x" << imageLabel->getData()->height << ")";
-//        statusBar()->showMessage(QString::fromStdString(stream.str()));
-        statusBar()->showMessage(QString("Image: %1(%2 × %3)").arg(fileName).arg(imageLabel->getData()->width).arg(imageLabel->getData()->height));
-        imageInformationBar->update(*imageLabel->getData());
+    void MainWindow::openImage()
+    {
+        std::unique_ptr<QFileDialog> dialog = std::make_unique<QFileDialog>(this);
+        openImagePrivate(dialog.get());
     }
 
-    void MainWindow::saveImage() {
-        if (imageLabel->getOverrideWarning()) {
-            QMessageBox messageBox(this);
-            messageBox.setText("Overwrite current Image?");
-            messageBox.setInformativeText("This action is irreversible!");
-            messageBox.setStandardButtons(QMessageBox::Save | QMessageBox::Cancel);
-            messageBox.setDefaultButton(QMessageBox::Cancel);
-            messageBox.setWindowTitle("Overwrite changes");
-            QCheckBox checkBox("Don't show this again", &messageBox);
-            messageBox.setCheckBox(&checkBox);
-            int response = messageBox.exec();
-            if (response == QMessageBox::Save) {
-                if (messageBox.checkBox()->isChecked()) {
-                    imageLabel->disableOverrideWarning();
-                }
-                saveToFile(imageLabel->getFilePath());
-                statusBar()->showMessage(QString("Image saved to : %1").arg(imageLabel->getFilePath()));
-            }
-        }
-        else {
-            saveToFile(imageLabel->getFilePath());
-            statusBar()->showMessage(QString("Image saved to : %1").arg(imageLabel->getFilePath()));
-        }
-    }
-
-    void MainWindow::saveImageAs() {
+    QString MainWindow::saveImageAs() {
         QFileDialog dialog(this);
-        dialog.setWindowModality(Qt::WindowModal);
-        dialog.setAcceptMode(QFileDialog::AcceptSave);
-
-        QString format ;
-        switch(imageLabel->getFileFormat()) {
-            case image::ImageFormat::PBM:
-                format = "pbm";
-                break;
-            case image::ImageFormat::PGM:
-                format = "pgm";
-                break;
-            case image::ImageFormat::PPM:
-                format = "ppm";
-                break;
-        }
-        dialog.setNameFilter(format.toUpper()+" (*."+format+")");
-        dialog.selectFile(tr("untitled")+"."+format);
-        if (dialog.exec() != QDialog::Accepted)
-            return;
-        QString path = dialog.selectedFiles().first();
-        saveToFile(path);
-        updateSelectedFile(path);
+        return saveImageAsPrivate(&dialog);
     }
 
     void MainWindow::saveToFile(QString path) {
@@ -228,16 +168,7 @@ namespace GUI {
 
     void MainWindow::addSaltAndPepperNoise() {
         auto dialog = new QInputDialog(this);
-        dialog->setInputMode(QInputDialog::DoubleInput);
-        dialog->setDoubleMinimum(0);
-        dialog->setDoubleMaximum(1);
-        dialog->setDoubleDecimals(3);
-        dialog->setLabelText("Enter the impulse probability p:");
-        dialog->exec();
-        image::noise::ImpulsiveNoise noise(dialog->doubleValue());
-        noise(*imageLabel->getData());
-        imageInformationBar->update(*imageLabel->getData());
-        imageLabel->updateQImage();
+        addSaltAndPepperNoisePrivate(dialog);
     }
 
     void MainWindow::addGaussianNoise() {
@@ -270,27 +201,7 @@ namespace GUI {
     void MainWindow::addMedianFilter()
     {
         options::FilterDialog dialog(this);
-        auto sizeInput = new QSpinBox(&dialog);
-        dialog.addWidget("Size:", sizeInput);
-        sizeInput->setRange(1, imageLabel->getData()->width);
-        sizeInput->setValue(3);
-        auto paddingInput =dialog.createPaddingInput();
-        dialog.finalize();
-        connect(&dialog, &QDialog::accepted, [=]() {
-            image::filter::MedianFilter filter(sizeInput->value());
-            std::unique_ptr<image::Padding> padding=options::PaddingInput::getPadding(paddingInput->currentIndex(),*imageLabel->getData());
-            image::Image oldImage=*imageLabel->getData();
-            if(padding)
-                *imageLabel->getData() = std::move(filter.apply(*padding));
-            else
-                *imageLabel->getData() = std::move(filter.apply(*imageLabel->getData()));
-            imageInformationBar->update(*imageLabel->getData());
-            imageLabel->updateQImage();
-            QString msg=tr("Median filter applied, Signal to Noise Ratio: ");
-            msg+=QString::number((double) image::stats::signalToNoiseRatio(oldImage, *imageLabel->getData()));
-            statusBar()->showMessage(msg);
-        });
-        dialog.exec();
+        addMedianFilterPrivate(&dialog);
     }
 
     void MainWindow::addGaussianBlurFilter() {
@@ -387,29 +298,7 @@ namespace GUI {
     void MainWindow::addLaplacianFilter()
     {
         options::FilterDialog dialog(this);
-        auto paddingInput = dialog.createPaddingInput();
-        auto grayFilterInput = dialog.createGrayFilterInput();
-        auto thresholdInput=new QSpinBox(&dialog);
-        dialog.addWidget("Threshold: ",thresholdInput);
-        thresholdInput->setRange(0,255);
-        thresholdInput->setValue(70);
-        auto includeDiagonalCheckBox = new QCheckBox("Include Diagonal",&dialog);
-        includeDiagonalCheckBox->setChecked(false);
-        dialog.addWidget(includeDiagonalCheckBox);
-        dialog.finalize();
-        connect(&dialog, &QDialog::accepted, [=]() {
-            image::filter::edge::LaplacianFilter filter(options::GrayFilterInput::getGrayFilter(grayFilterInput->currentIndex()),thresholdInput->value(),
-                                                        includeDiagonalCheckBox->isChecked());
-            std::unique_ptr<image::Padding> padding=options::PaddingInput::getPadding(paddingInput->currentIndex(),*imageLabel->getData());
-            image::Image oldImage=*imageLabel->getData();
-            if(padding)
-                *imageLabel->getData() = std::move(filter.apply(*padding));
-            else
-                *imageLabel->getData() = std::move(filter.apply(*imageLabel->getData()));
-            imageInformationBar->update(*imageLabel->getData());
-            imageLabel->updateQImage();
-        });
-        dialog.exec();
+        addLaplacianFilterPrivate(&dialog);
     }
 
     void MainWindow::about() {
@@ -513,32 +402,7 @@ The application is developped by:
     void MainWindow::otsuSegmentation()
     {
         options::FilterDialog dialog(this);
-        auto spinBox=dynamic_cast<QSpinBox*>(dialog.addWidget("Number of clutsers: ",new QSpinBox(&dialog)));
-        auto checkBox = dynamic_cast<QCheckBox*>(dialog.addWidget(new QCheckBox(this)));
-        checkBox->setText("Output binary image");
-        spinBox->setRange(2,20);
-        spinBox->setValue(2);
-        dialog.finalize();
-        connect(spinBox,&QSpinBox::valueChanged,[checkBox](int val)
-        {
-            checkBox->setEnabled(val==2);
-        });
-        connect(&dialog,&QInputDialog::accepted,[spinBox,checkBox,this]()
-        {
-            if(checkBox->isChecked())
-            {
-                image::segmentation::OtsuSegmentation otsu;
-                *imageLabel->getData() = std::move(otsu.apply(*imageLabel->getData()));
-            }
-            else
-            {
-                image::segmentation::IterativeOtsuSegmentation otsu(spinBox->value());
-                *imageLabel->getData() = std::move(otsu.apply(*imageLabel->getData()));
-            }
-            imageInformationBar->update(*imageLabel->getData());
-            imageLabel->updateQImage();
-        });
-        dialog.exec();
+        otsuSegmentationPrivate(&dialog);
     }
 
     void MainWindow::grayFilter() {
@@ -662,4 +526,181 @@ The application is developped by:
         dialog.resize(600,600);
         dialog.exec();
     }
+
+    void MainWindow::openImagePrivate(QFileDialog *dialog) {
+        dialog->setFileMode(QFileDialog::ExistingFile);
+        dialog->setNameFilter(tr("Images (*.pbm *.pgm *.ppm)"));
+        dialog->setModal(true);
+        dialog->setFocus();
+        dialog->open();
+
+        if (dialog->exec() != QDialog::Accepted)
+            return;
+
+        auto fileName = dialog->selectedFiles().first();
+        if (fileName.isEmpty()) {
+            return;
+        }
+        updateSelectedFile(fileName);
+        image::PNMReader reader;
+        imageLabel->openImage(new image::Image(reader.read(fileName.toStdString())));
+//        std::stringstream stream;
+//        stream << "Image: " << fileName.toStdString() << " (" << imageLabel->getData()->width << "x" << imageLabel->getData()->height << ")";
+//        statusBar()->showMessage(QString::fromStdString(stream.str()));
+        statusBar()->showMessage(QString("Image: %1(%2 × %3)").arg(fileName).arg(imageLabel->getData()->width).arg(imageLabel->getData()->height));
+        imageInformationBar->update(*imageLabel->getData());
+    }
+
+    void MainWindow::saveImage() {
+        if (imageLabel->getOverrideWarning()) {
+            QMessageBox messageBox(this);
+            messageBox.setText("Overwrite current Image?");
+            messageBox.setInformativeText("This action is irreversible!");
+            messageBox.setStandardButtons(QMessageBox::Save | QMessageBox::Cancel);
+            messageBox.setDefaultButton(QMessageBox::Cancel);
+            messageBox.setWindowTitle("Overwrite changes");
+            QCheckBox checkBox("Don't show this again", &messageBox);
+            messageBox.setCheckBox(&checkBox);
+            int response = messageBox.exec();
+            if (response == QMessageBox::Save) {
+                if (messageBox.checkBox()->isChecked()) {
+                    imageLabel->disableOverrideWarning();
+                }
+                saveToFile(imageLabel->getFilePath());
+                statusBar()->showMessage(QString("Image saved to : %1").arg(imageLabel->getFilePath()));
+            }
+        }
+        else {
+            saveToFile(imageLabel->getFilePath());
+            statusBar()->showMessage(QString("Image saved to : %1").arg(imageLabel->getFilePath()));
+        }
+    }
+
+    void MainWindow::addSaltAndPepperNoisePrivate(QInputDialog* dialog)
+    {
+        dialog->setInputMode(QInputDialog::DoubleInput);
+        dialog->setDoubleMinimum(0);
+        dialog->setDoubleMaximum(1);
+        dialog->setDoubleDecimals(3);
+        dialog->setLabelText("Enter the impulse probability p:");
+        dialog->exec();
+        image::noise::ImpulsiveNoise noise(dialog->doubleValue());
+        noise(*imageLabel->getData());
+        imageInformationBar->update(*imageLabel->getData());
+        imageLabel->updateQImage();
+    }
+
+    void MainWindow::addMedianFilterPrivate(options::FilterDialog *dialog) {
+        auto sizeInput = new QSpinBox(dialog);
+        dialog->addWidget("Size:", sizeInput);
+        sizeInput->setRange(1, imageLabel->getData()->width);
+        sizeInput->setValue(3);
+        auto paddingInput =dialog->createPaddingInput();
+        dialog->finalize();
+        connect(dialog, &QDialog::accepted, [=]() {
+            image::filter::MedianFilter filter(sizeInput->value());
+            std::unique_ptr<image::Padding> padding=options::PaddingInput::getPadding(paddingInput->currentIndex(),*imageLabel->getData());
+            image::Image oldImage=*imageLabel->getData();
+            if(padding)
+                *imageLabel->getData() = std::move(filter.apply(*padding));
+            else
+                *imageLabel->getData() = std::move(filter.apply(*imageLabel->getData()));
+            imageInformationBar->update(*imageLabel->getData());
+            imageLabel->updateQImage();
+            QString msg=tr("Median filter applied, Signal to Noise Ratio: ");
+            msg+=QString::number((double) image::stats::signalToNoiseRatio(oldImage, *imageLabel->getData()));
+            statusBar()->showMessage(msg);
+        });
+        dialog->exec();
+    }
+
+    QString MainWindow::saveImageAsPrivate(QFileDialog *dialog) {
+        dialog->setWindowModality(Qt::WindowModal);
+        dialog->setAcceptMode(QFileDialog::AcceptSave);
+
+        QString format ;
+        switch(imageLabel->getFileFormat()) {
+            case image::ImageFormat::PBM:
+                format = "pbm";
+                break;
+            case image::ImageFormat::PGM:
+                format = "pgm";
+                break;
+            case image::ImageFormat::PPM:
+                format = "ppm";
+                break;
+        }
+        dialog->setNameFilter(format.toUpper()+" (*."+format+")");
+        dialog->selectFile(tr("untitled")+"."+format);
+        if (dialog->exec() != QDialog::Accepted)
+            return "";
+        QString path = dialog->selectedFiles().first();
+        saveToFile(path);
+        updateSelectedFile(path);
+        return path;
+
+    }
+
+    void MainWindow::addLaplacianFilterPrivate(options::FilterDialog *dialog) {
+        auto paddingInput = dialog->createPaddingInput();
+        paddingInput->setObjectName("padding");
+        auto grayFilterInput = dialog->createGrayFilterInput();
+        grayFilterInput->setObjectName("gray");
+        auto thresholdInput=new QSpinBox(dialog);
+        thresholdInput->setObjectName("threshold");
+        dialog->addWidget("Threshold: ",thresholdInput);
+        thresholdInput->setRange(0,255);
+        thresholdInput->setValue(70);
+        auto includeDiagonalCheckBox = new QCheckBox("Include Diagonal",dialog);
+        includeDiagonalCheckBox->setChecked(false);
+        dialog->addWidget(includeDiagonalCheckBox);
+        dialog->finalize();
+        connect(dialog, &QDialog::accepted, [=]() {
+            image::filter::edge::LaplacianFilter filter(options::GrayFilterInput::getGrayFilter(grayFilterInput->currentIndex()),thresholdInput->value(),
+                                                        includeDiagonalCheckBox->isChecked());
+            std::unique_ptr<image::Padding> padding=options::PaddingInput::getPadding(paddingInput->currentIndex(),*imageLabel->getData());
+            image::Image oldImage=*imageLabel->getData();
+            if(padding)
+                *imageLabel->getData() = std::move(filter.apply(*padding));
+            else
+                *imageLabel->getData() = std::move(filter.apply(*imageLabel->getData()));
+            imageInformationBar->update(*imageLabel->getData());
+            imageLabel->updateQImage();
+        });
+        dialog->exec();
+    }
+
+    void MainWindow::otsuSegmentationPrivate(options::FilterDialog *dialog)
+    {
+        auto spinBox=dynamic_cast<QSpinBox*>(dialog->addWidget("Number of clutsers: ",new QSpinBox(dialog)));
+        spinBox->setObjectName("clusters");
+        auto checkBox = dynamic_cast<QCheckBox*>(dialog->addWidget(new QCheckBox(this)));
+        checkBox->setObjectName("binarise");
+        checkBox->setText("Output binary image");
+        spinBox->setRange(2,20);
+        spinBox->setValue(2);
+        dialog->finalize();
+        connect(spinBox,&QSpinBox::valueChanged,[checkBox](int val)
+        {
+            checkBox->setEnabled(val==2);
+        });
+        connect(dialog,&QInputDialog::accepted,[spinBox,checkBox,this]()
+        {
+            if(checkBox->isChecked())
+            {
+                image::segmentation::OtsuSegmentation otsu;
+                *imageLabel->getData() = std::move(otsu.apply(*imageLabel->getData()));
+            }
+            else
+            {
+                image::segmentation::IterativeOtsuSegmentation otsu(spinBox->value());
+                *imageLabel->getData() = std::move(otsu.apply(*imageLabel->getData()));
+            }
+            imageInformationBar->update(*imageLabel->getData());
+            imageLabel->updateQImage();
+        });
+        dialog->exec();
+
+    }
+
 } // GUI
