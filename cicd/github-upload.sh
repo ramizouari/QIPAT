@@ -26,4 +26,4 @@ releaseid=$(curl -X POST -H "Authorization: token $token" --data "$(release_data
 
 
 # Upload the Artifact
-curl -X POST -H "Authorization:token $token" -H "Content-Type:application/octet-stream" --data-binary $artifact https://uploads.github.com/repos/ramizouari/QIPAT/releases/$releaseid/assets?name=$artifact
+curl -X POST -H "Authorization:token $token" -H "Content-Type:application/octet-stream" --data-binary @$artifact https://uploads.github.com/repos/ramizouari/QIPAT/releases/$releaseid/assets?name=$artifact
