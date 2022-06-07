@@ -4,3 +4,4 @@ cmake-*
 bin
 tag
 changelog
+build

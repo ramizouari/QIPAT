@@ -78,6 +78,19 @@ pipeline {
             }
         }
 
+        stage("Run Tests") {
+            steps {
+                sh 'cp -r img buildapp/img' // Needed by some tests
+                sh 'chmod a+x cicd/evaluate-tests.sh'
+                sh 'cp cicd/evaluate-tests.sh buildapp'
+
+                dir('buildapp') {
+                    sh './evaluate-tests.sh' // Run the Tests && Save the Results
+                }
+
+            }
+        }
+
         stage('Build packaging tools') {
             steps {
                 dir('bin') {
@@ -99,6 +112,7 @@ pipeline {
             steps {
                 dir('bin') {
                     sh 'mv ../resources/* .'
+
                     sh 'mkdir AppDir'
                     sh './linuxdeploy-x86_64.AppImage --appimage-extract-and-run --appdir AppDir -e ImageProcessing -i QIPAT.png -d QIPAT.desktop --plugin qt --output appimage' // appimage-extract-and-run : because we are in a docker container
                     sh 'ls'
@@ -122,10 +136,11 @@ pipeline {
             steps{
                 sh 'chmod a+x cicd/github-upload.sh'
                 sh 'mv cicd/github-upload.sh bin/' 
+                sh 'mv buildapp/test-results bin/'
 
                 dir('bin') {
                     sh "ls"
-                    sh "./github-upload.sh $GITHUB_TOKEN QIPAT.AppImage ../tag"
+                    sh "./github-upload.sh $GITHUB_TOKEN QIPAT.AppImage ../tag test-results"
                 }
             }
         }
