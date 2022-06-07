@@ -72,6 +72,8 @@ In this example we will view the spectrum of our image, and will apply a spectra
 
 This pipeline uses **Jenkins** hosted on an an `EC2 instance` ( with an `Elastic IP` ) . The main purpose is to **package** the application and create an **AppImage** that can run from **any linux machine** ( independant from the underlying distribution ). More information about the AppImage format [here](https://appimage.org/) .
 
+> Note that `glibc` 2.35 is required to run this software ( since it's dynamically linked and not static. )
+
 
 ### General Pipeline
 
@@ -112,3 +114,5 @@ Finally, We create our `Github Release`, Tag the  release and upload the binary.
 ### Pipeline Results
 
 ![Results](./resources/pipeline-results.png)
+
+![Demo](./resources/demo-working.png)
