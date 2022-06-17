@@ -8,6 +8,7 @@
 #include <fstream>
 #include <ranges>
 #include <iostream>
+#include <bitset>
 
 
 image::ImageReader::ImageReader() {

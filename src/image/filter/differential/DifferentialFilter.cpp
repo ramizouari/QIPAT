@@ -4,6 +4,7 @@
 
 #include "DifferentialFilter.h"
 #include "functional/zip.h"
+#include <algorithm>
 
 namespace image::filter::differential
 {

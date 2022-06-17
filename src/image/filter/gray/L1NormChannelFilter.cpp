@@ -3,6 +3,7 @@
 //
 
 #include "L1NormChannelFilter.h"
+#include <algorithm>
 
 namespace image::filter::gray
 {

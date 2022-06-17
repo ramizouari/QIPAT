@@ -85,7 +85,7 @@ namespace image::filter {
     }
 
     Image SeparableConvolutionalFilter::apply(const Image &src) const {
-
+        throw std::runtime_error("Not defined");
     }
 
 

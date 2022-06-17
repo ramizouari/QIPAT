@@ -59,7 +59,8 @@ namespace GUI::options {
         return contrastView->getAllPoints();
     }
 
-    std::vector<std::pair<image::Real, image::Real>> SplineContrastDialog::getPointsPair() {
-
+    std::vector<std::pair<image::Real, image::Real>> SplineContrastDialog::getPointsPair() 
+    {
+        throw std::runtime_error("Not defined yet");
     }
 } // options

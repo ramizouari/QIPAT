@@ -3,6 +3,7 @@
 //
 
 #include "L2NormChannelFilter.h"
+#include <algorithm>
 
 namespace image::filter::gray
 {

@@ -3,6 +3,7 @@
 //
 #include <numeric>
 #include "stats.h"
+#include <algorithm>
 
 
 namespace image::stats

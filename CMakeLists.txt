@@ -124,7 +124,7 @@ target_link_libraries(ImageProcessing
         Qt::Widgets
         Qt::Charts
         Qt::DataVisualization
-        muparser
+        muparser::muparser
         )
 
 add_executable(LinearAlgebraTest tests/linear_algebra/linear_algebra_approximate_test.cpp tests/linear_algebra/linear_algebra_exact_test.cpp tests/print.h)
@@ -148,7 +148,7 @@ target_link_libraries(DataStructuresTest ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
 target_link_libraries(TopologyTest ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
 target_link_libraries(AlgebraTest ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
 target_link_libraries(ImageCoreTest ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
-target_link_libraries(ImageGUITest PRIVATE Qt::Test Qt::Core Qt::Widgets Qt::Gui Qt::Charts Qt::DataVisualization muparser)
+target_link_libraries(ImageGUITest PRIVATE Qt::Test Qt::Core Qt::Widgets Qt::Gui Qt::Charts Qt::DataVisualization muparser::muparser)
 
 
 # Used for installing

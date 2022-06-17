@@ -1,7 +1,8 @@
 //
 // Created by ramizouari on 15/05/22.
 //
-
+#undef UNICODE
+#undef _UNICODE
 #ifndef IMAGEPROCESSING_PARAMETRICPARSER_H
 #define IMAGEPROCESSING_PARAMETRICPARSER_H
 

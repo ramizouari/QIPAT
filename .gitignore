@@ -5,3 +5,6 @@ bin
 tag
 changelog
 build
+.vs
+out
+CMakeSettings.json
