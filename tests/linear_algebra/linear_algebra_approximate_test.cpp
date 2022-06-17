@@ -287,7 +287,7 @@ BOOST_AUTO_TEST_SUITE(test_matrix_real)
             BOOST_CHECK(std::abs(l2_distance(A * A.inv(), decltype(A)((T)1)))<err);
         }
 
-        using dimension_t=boost::mp11::mp_list_c<int,10,50,100,200>;
+        using dimension_t=boost::mp11::mp_list_c<int,10,50,100>;
         using inv_test_types=boost::mp11::mp_product<std::tuple,real_types,dimension_t>;
         BOOST_AUTO_TEST_CASE_TEMPLATE(test_matrix_inv_rand,U,inv_test_types)
         {

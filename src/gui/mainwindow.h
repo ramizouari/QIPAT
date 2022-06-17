@@ -18,14 +18,6 @@
 #include <QInputDialog>
 
 
-
-#ifdef TEST_MODE
-#define protected public
-#define private public
-constexpr bool isTestMode = true;
-#endif
-
-
 namespace GUI {
     QT_BEGIN_NAMESPACE
     namespace Ui { class MainWindow; }
@@ -88,12 +80,14 @@ namespace GUI {
        void addMedianFilterPrivate(options::FilterDialog* filterDialog);
        void addLaplacianFilterPrivate(options::FilterDialog* filterDialog);
        void otsuSegmentationPrivate(options::FilterDialog *dialog);
+
+
+    private:
+        friend class NoiseReductionScenario;
+        friend class ImageViewTest;
+        friend class MaskDetectionScenario;
     };
 } // GUI
 
-#ifdef TEST_MODE
-#undef protected
-#undef private
-#endif
 
 #endif //IMAGEPROCESSING_MAINWINDOW_H

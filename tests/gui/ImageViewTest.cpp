@@ -1,7 +1,7 @@
 //
 // Created by ramizouari on 04/06/22.
 //
-#define TEST_MODE
+//#define TEST_MODE
 #include <QtGui/QImage>
 #include "ImageViewTest.h"
 #include "gui/imageview.h"

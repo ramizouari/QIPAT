@@ -99,7 +99,7 @@ linalg::d_matrix<IC> fourierMatrix(int n)
     linalg::d_matrix<IC> res(0,linalg::m_shape{n,n});
     for(int i=0;i<n;++i)
         for(int j=0;j<n;++j)
-            res[i][j]=std::exp(IC(0,2*M_PI*i*j)/static_cast<real>(n));
+            res[i][j]=std::exp(IC(0,2*std::numbers::pi*i*j)/static_cast<real>(n));
     return res;
 }
 

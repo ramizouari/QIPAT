@@ -1,7 +1,7 @@
 //
 // Created by ramizouari on 06/06/22.
 //
-#define TEST_MODE
+//#define TEST_MODE
 #include "NoiseReductionScenario.h"
 #include "TestUtilities.h"
 #include "gui/mainwindow.h"

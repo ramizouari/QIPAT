@@ -88,7 +88,7 @@ BOOST_AUTO_TEST_SUITE(basic_image)
 0 0 0)" << std::flush;
             file.close();
             PNMReader reader;
-            auto image=reader.read(tmpPath);
+            auto image=reader.read(tmpPath.string());
             BOOST_CHECK_EQUAL(image.width,3);
             BOOST_CHECK_EQUAL(image.height,2);
             BOOST_CHECK_EQUAL(image.nb_channel,1);
@@ -114,7 +114,7 @@ BOOST_AUTO_TEST_SUITE(basic_image)
 6 88 257)" << std::flush;
             file.close();
             PNMReader reader;
-            auto image=reader.read(tmpPath);
+            auto image=reader.read(tmpPath.string());
             BOOST_REQUIRE_EQUAL(image.width,3);
             BOOST_REQUIRE_EQUAL(image.height,2);
             BOOST_REQUIRE_EQUAL(image.nb_channel,1);
@@ -141,7 +141,7 @@ BOOST_AUTO_TEST_SUITE(basic_image)
                     file.put(formula(i,j));
             file.close();
             PNMReader reader;
-            auto image=reader.read(tmpPath);
+            auto image=reader.read(tmpPath.string());
             BOOST_REQUIRE_EQUAL(image.width,3);
             BOOST_REQUIRE_EQUAL(image.height,2);
             BOOST_REQUIRE_EQUAL(image.nb_channel,1);
@@ -163,7 +163,7 @@ BOOST_AUTO_TEST_SUITE(basic_image)
                     file.put(i+j==1);
             file.close();
             PNMReader reader;
-            auto image=reader.read(tmpPath);
+            auto image=reader.read(tmpPath.string());
             BOOST_REQUIRE_EQUAL(image.width,3);
             BOOST_REQUIRE_EQUAL(image.height,2);
             BOOST_REQUIRE_EQUAL(image.nb_channel,1);

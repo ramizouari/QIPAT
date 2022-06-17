@@ -19,7 +19,7 @@
 using namespace image;
 constexpr Real epsilon = 1e-3;
 
-Real formula(int c,int i,int j,int width,int height)
+inline Real formula(int c,int i,int j,int width,int height)
 {
     if(i>= 0 && i < width && j >= 0 && j < height)
         return (c*height*width+i*width+j+1);
@@ -27,7 +27,7 @@ Real formula(int c,int i,int j,int width,int height)
         return 0;
 }
 
-Real formula(int i,int j)
+inline Real formula(int i,int j)
 {
     return i*30+j;
 }

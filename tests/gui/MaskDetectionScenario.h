@@ -4,7 +4,6 @@
 #include <QObject>
 #include <QDir>
 
-#define TEST_MODE
 #ifndef IMAGEPROCESSING_OTSUALGORITHMTEST_H
 #define IMAGEPROCESSING_OTSUALGORITHMTEST_H
 

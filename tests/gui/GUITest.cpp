@@ -22,8 +22,8 @@ int main(int argc, char** argv)
         status |= QTest::qExec(&tc, argc, argv);
     }
     {
-        //NoiseReductionScenario tc;
-        //status |= QTest::qExec(&tc, argc, argv);
+        NoiseReductionScenario tc;
+        status |= QTest::qExec(&tc, argc, argv);
     }
     {
         MaskDetectionScenario tc;
