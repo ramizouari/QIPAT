@@ -8,17 +8,19 @@
 #include <QFileDialog>
 
 
-
-class NoiseReductionScenario :public QObject
+namespace test
 {
+    class NoiseReductionScenario :public QObject
+    {
     Q_OBJECT
-private slots:
-    void init();
-    void completeTest();
-    void cleanup();
-private:
-    QDir directory;
-};
+    private slots:
+        void init();
+        void completeTest();
+        void cleanup();
+    private:
+        QDir directory;
+    };
+}
 
 
 #endif //IMAGEPROCESSING_NOISEREDUCTIONSCENARIO_H

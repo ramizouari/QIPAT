@@ -11,18 +11,22 @@ namespace GUI
 }
 
 #include <QtTest/QtTest>
-class ImageViewTest : public QObject
+namespace test
 {
+    class ImageViewTest : public QObject
+    {
     Q_OBJECT
-public:
-private slots:
-    void init();
-    void testZoomIn();
-    void testZoomOut();
-    void testImageSetter();
-private:
-    static std::unique_ptr<GUI::ImageView> view;
-};
+    public:
+    private slots:
+        void init();
+        void testZoomIn();
+        void testZoomOut();
+        void testImageSetter();
+    private:
+        static std::unique_ptr<GUI::ImageView> view;
+    };
+}
+
 
 
 #endif //IMAGEPROCESSING_IMAGEVIEWTEST_H

@@ -7,16 +7,18 @@
 #ifndef IMAGEPROCESSING_OTSUALGORITHMTEST_H
 #define IMAGEPROCESSING_OTSUALGORITHMTEST_H
 
-
-class MaskDetectionScenario : public QObject {
+namespace test
+{
+    class MaskDetectionScenario : public QObject {
     Q_OBJECT
-private slots:
-    void init();
-    void completeTest();
-    void cleanup();
-private:
-    QDir directory;
-};
+    private slots:
+        void init();
+        void completeTest();
+        void cleanup();
+    private:
+        QDir directory;
+    };
+}
 
 
 #endif //IMAGEPROCESSING_OTSUALGORITHMTEST_H

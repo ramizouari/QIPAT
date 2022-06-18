@@ -11,6 +11,7 @@
 #include <QSpinBox>
 #include <QCheckBox>
 
+using namespace test;
 void MaskDetectionScenario::cleanup() {
 
 }

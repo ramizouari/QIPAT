@@ -8,6 +8,7 @@
 #include <chrono>
 #include <QInputDialog>
 
+using namespace test;
 constexpr double probability=0.05;
 using namespace std::chrono_literals;
 

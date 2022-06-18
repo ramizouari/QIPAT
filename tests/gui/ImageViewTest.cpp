@@ -6,7 +6,7 @@
 #include "ImageViewTest.h"
 #include "gui/imageview.h"
 
-
+using namespace test;
 using GUI::ImageView;
 std::unique_ptr<GUI::ImageView> ImageViewTest::view{};
 

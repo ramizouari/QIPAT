@@ -17,6 +17,11 @@
 #include <QFileDialog>
 #include <QInputDialog>
 
+namespace test {
+    class NoiseReductionScenario;
+    class MaskDetectionScenario;
+    class ImageViewTest;
+}
 
 namespace GUI {
     QT_BEGIN_NAMESPACE
@@ -83,9 +88,9 @@ namespace GUI {
 
 
     private:
-        friend class NoiseReductionScenario;
-        friend class ImageViewTest;
-        friend class MaskDetectionScenario;
+        friend class test::NoiseReductionScenario;
+        friend class test::ImageViewTest;
+        friend class test::MaskDetectionScenario;
     };
 } // GUI
 

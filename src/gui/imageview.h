@@ -11,6 +11,10 @@
 #include "image/Image.h"
 #include "image/ImageFormat.h"
 
+namespace test{
+    class ImageViewTest;
+}
+
 namespace GUI {
     //QT_BEGIN_NAMESPACE
     //namespace Ui { class ImageView; }
@@ -51,7 +55,7 @@ namespace GUI {
 
 
     private:
-        friend class ImageViewTest;
+        friend class test::ImageViewTest;
     };
 } // GUI
 

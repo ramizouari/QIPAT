@@ -15,6 +15,7 @@
 
 int main(int argc, char** argv)
 {
+    using namespace test;
     QApplication app(argc, argv);
     int status = 0;
     {
